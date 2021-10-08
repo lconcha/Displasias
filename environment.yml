@@ -1,0 +1,17 @@
+# run: conda env create --file environment.yml
+name: cx-streams-env
+channels:
+ - conda-forge
+ - anaconda
+ - mrtrix3
+dependencies:
+ - python
+ - matplotlib
+ - numpy
+ - nibabel
+ - dipy
+ - networkx
+ - scipy
+ - scikit-image
+ - scikit-learn
+ - mrtrix3
