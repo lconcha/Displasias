@@ -109,7 +109,8 @@ if __name__ == "__main__":
     for i, s in enumerate(streams_2d):
         ones = np.ones([len(s), 1])
         v = np.concatenate((s, slice_n*ones, ones), axis=1)
-        aux = np.diag([0.5,0.5,1,1])    # we were working on 2x size images
+        #aux = np.diag([0.5,0.5,1,1])    # we were working on 2x size images
+        aux = np.diag([1,1,1,1])  #### TEMPORARY
         new_s = (affine@aux@v.T).T
         #save
         j = f"{i:0{3}}" # zero padding
