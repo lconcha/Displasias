@@ -1,4 +1,5 @@
 #!/bin/bash
+source `which my_do_cmd`
 
 if [ "$1" == "-h" -o "$1" == "--help" -o "$1" == "" ]; then
   echo -e "\n	Usage: `basename $0` grid (.mnc or .nii) [suffix_str] [alpha]"
@@ -40,6 +41,13 @@ echo "alpha weight = " $alpha
 mnc2nii ${outputname}_GradX.mnc ${outputname}_GradX.nii 
 mnc2nii ${outputname}_GradY.mnc ${outputname}_GradY.nii
 mnc2nii ${outputname}_GradZ.mnc ${outputname}_GradZ.nii
+
+for f in ${outputname}_Grad?.nii 
+do
+  echo -e "\n    Copying geometry from ${filename}.nii to $f \n"
+  my_do_cmd fslcpgeom ${filename}.nii $f
+done
+
 
 mrcat ${outputname}_GradX.nii ${outputname}_GradY.nii ${outputname}_GradZ.nii ${outputname}_RGB.nii.gz
 
