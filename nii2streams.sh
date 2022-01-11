@@ -71,20 +71,22 @@ done
 
 # Generate seed points for streamlines
 #input1=$dir_name/${prefix}_${side}_outline.nii.gz
-echo -e "\n  Running: get_seeds.py $outline $dir_name"
+echolor cyan "\n  Running: get_seeds.py $outline $dir_name $prefix"
 $script_dir/get_seeds.py $outline $dir_name $prefix
 
 # Create streamlines
 mkdir $dir_name/tck
 input1=$dir_name/${prefix}_${side}_minc_RGB.nii.gz
-for seed_file in $dir_name/${prefix}_${side}_??_seeds_smooth_resampled.txt;
+for seed_file in $dir_name/${prefix}_${side}*_??_seeds_smooth_resampled.txt;
 do
   IFS='_' read -ra split_name <<< "$seed_file"
   j=${split_name[-4]}   # <- slice_n
-  #input2=$seed_file
+  #j=12
+  echolor yellow "  j is $j"#input2=$seed_file
+  echolor yellow "  seed_file is $seed_file"
   input2=$dir_name/${prefix}_${side}_${j}_seeds_smooth_resampled.txt
   output=$dir_name/tck/${prefix}_${side}_${j}_out
-  echo -e "\n  Running: vector2streams.py $input1 $input2 $ref_image $output \n"
+  echolor cyan "\n  Running: vector2streams.py $input1 $input2 $ref_image $output \n"
   $script_dir/vector2streams.py $input1 $input2 $ref_image $output
 done
 
