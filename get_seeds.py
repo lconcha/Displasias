@@ -68,6 +68,7 @@ def get_seeds_from_nii(f_name, subject, side='l', smooth=False, save=True, s=0.1
         
         if save:
             seeds_name = f'{subject}_{side}_{slice_n}_seeds'
+            print(f'\n TEMPORARY\n subject is {subject}\nside is {side}\nslice_n is {slice_n}\n')
             if smooth: seeds_name += '_smooth'
             
             np.savetxt(join(save_folder, basename(seeds_name)+'.txt'), seeds)
@@ -100,6 +101,8 @@ if __name__ == "__main__":
 
     #subject = basename(f_name).split('_')[0]
     side = basename(f_name).split('_')[1]
+    #side = basename(basename(f_name).split('_')[1]).split('.')[0]
+    print(f'\n TEMPORARY\nf_name is {f_name}\nside is {side}\n')
     seeds = get_seeds_from_nii(f_name, subject=prefix, side=side, smooth=True, save=True,
                                s=10, save_folder=out_dir, )
 
