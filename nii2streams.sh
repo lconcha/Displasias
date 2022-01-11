@@ -81,7 +81,6 @@ for seed_file in $dir_name/${prefix}_${side}*_??_seeds_smooth_resampled.txt;
 do
   IFS='_' read -ra split_name <<< "$seed_file"
   j=${split_name[-4]}   # <- slice_n
-  #j=12
   echolor yellow "  j is $j"#input2=$seed_file
   echolor yellow "  seed_file is $seed_file"
   input2=$dir_name/${prefix}_${side}_${j}_seeds_smooth_resampled.txt
