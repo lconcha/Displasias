@@ -38,9 +38,9 @@ grid_name=$(basename ${grid_in%_grid_in*})	# e.g. 37A_l
 #elif [ -f "${rat_id}_${side}_grid_in.nii.gz" -a -f "${rat_id}_${side}_grid_mid.nii.gz" ]
 #elif [ -f $grid_in -a -f $grid_mid ]
 
-if [ -f "$out_folder/${grid_name}_${gridsufix}.nii.gz" ]
+if [ -f "$out_folder/${grid_name}_${gridsufix}.nii" ]
 then
-	echo -e "\n		File '${grid_name}_${gridsufix}.nii.gz' already exists.\n"
+	echo -e "\n		File '${grid_name}_${gridsufix}.nii' already exists.\n"
 elif [ -f $grid_in -a -f $grid_mid ]
 then
 	#mrcalc ${rat_id}_${side}_grid_in.nii.gz 0 -mult $out -add base.nii
@@ -61,14 +61,14 @@ then
 	a=${out_folder}/base.nii; b=${out_folder}/base2.nii
 	c=${out_folder}/base3.nii; d=${out_folder}/base4.nii
 	#mrcalc  $a $b -add $c -add $d -add ${out_folder}/${rat_id}_${side}_${gridsufix}.nii.gz
-	mrcalc  $a $b -add $c -add $d -add $out_folder/${grid_name}_${gridsufix}.nii.gz
+	mrcalc  $a $b -add $c -add $d -add $out_folder/${grid_name}_${gridsufix}.nii
 
 	gio trash ${out_folder}/base*.nii
 
 	#nii2mnc ${out_folder}/${rat_id}_${side}_${gridsufix}.nii.gz ${out_folder}/${rat_id}_${side}_${gridsufix}.mnc
-	nii2mnc $out_folder/${grid_name}_${gridsufix}.nii.gz $out_folder/${grid_name}_${gridsufix}.mnc
+	nii2mnc $out_folder/${grid_name}_${gridsufix}.nii $out_folder/${grid_name}_${gridsufix}.mnc
 
-	echo -e "\n Grids '$out_folder/${grid_name}_${gridsufix}' (.mnc & .nii.gz) created in '$out_folder'\n"
+	echo -e "\n Grids '$out_folder/${grid_name}_${gridsufix}' (.mnc & .nii) created in '$out_folder'\n"
 else
 	echo -e "\n	Error: files '$grid_in', '$grid_mid' missing.\n"
 fi
