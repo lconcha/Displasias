@@ -24,7 +24,8 @@ then
   my_do_cmd mrconvert -axes 0,2,1 \
             -strides 1,2,3 \
             $lines \
-            ${tmpDir}/plines.nii.gz
+            ${tmpDir}/plines_wtransf.nii.gz
+  my_do_cmd mrtransform -identity ${tmpDir}/plines_wtransf.nii.gz ${tmpDir}/plines.nii.gz
         
 else
   cp $lines ${tmpDir}/plines.nii.gz
