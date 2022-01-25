@@ -5,10 +5,13 @@
 
 New: python vector2streams.py minc_RGB seeds_txt img_ref stream_name
 """
+from builtins import breakpoint
+from turtle import shape
 import numpy as np
 import nibabel as nib
 from dipy.io.image import load_nifti
 import matplotlib.pyplot as plt
+import pdb
 
 def get_tck_list(segments):
     """
@@ -35,6 +38,7 @@ def vectorfield2streams_2d(x, y, gX, gY, seeds, slice_n, side= 'l',
     """"
         Returns list of ndarrays (streams in 2D)
     """
+    #breakpoint()
     if start_line=='outline': int_dir = 'forward'
     elif start_line=='inline': int_dir = 'backward'
     streams = []
@@ -49,7 +53,9 @@ def vectorfield2streams_2d(x, y, gX, gY, seeds, slice_n, side= 'l',
                   )
         segments = strm.lines.get_segments()
         lines = get_tck_list(segments)
-        streams.append(lines[0])
+        shp = np.shape(lines)
+        if shp[1] > 0:
+            streams.append(lines[0])
     
     plt.close(fig)
     return streams
@@ -77,10 +83,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # test values
-    # minc_RGB = '37A_l_minc_RGB.nii.gz'
-    # dwi_ref = '../37A_3d_ref.nii'
-    # seeds_txt = "37A_l_14_seeds_smooth_resampled.txt"
-    # stream_name = 'tck/37A_l_14_out'
+    # minc_RGB = '64A_l_minc_RGB.nii.gz'
+    # dwi_ref = '../64A_3d_ref.nii'
+    # seeds_txt = "64A_l_14_seeds_smooth_resampled.txt"
+    # stream_name = 'tck/64A_l_14_out'
     minc_RGB = args.minc_RGB
     dwi_ref = args.dwi_ref
     seeds_txt = args.seeds_txt
@@ -104,17 +110,23 @@ if __name__ == "__main__":
     
     streams_2d = vectorfield2streams_2d(x, y, gX, gY, seeds[:,:2], slice_n,
                                         side= 'r', start_line='outline')
-    
+    #breakpoint()
     # add z-coordinate & save
-    for i, s in enumerate(streams_2d):
-        ones = np.ones([len(s), 1])
-        v = np.concatenate((s, slice_n*ones, ones), axis=1)
+    #pdb.set_trace()
+    np.shape(streams_2d)
+    for i, st in enumerate(streams_2d):
+        print(f'xxxx')
+        print(f' {i}\n')
+        #breakpoint()
+        #st = streams_2d[i+1] # this is stupid, since we're using enumerate, but I am off by one
+        ones = np.ones([len(st), 1])
+        v = np.concatenate((st, slice_n*ones, ones), axis=1)
         #aux = np.diag([0.5,0.5,1,1])    # we were working on 2x size images
         aux = np.diag([1,1,1,1])  #### TEMPORARY
-        new_s = (affine@aux@v.T).T
+        new_st = (affine@aux@v.T).T
         #save
         j = f"{i:0{3}}" # zero padding
-        np.savetxt(f"{stream_name}_{j}.txt", new_s[:,:3])
+        np.savetxt(f"{stream_name}_{j}.txt", new_st[:,:3])
     
     # convert to .tck & resample
     convert = f"tckconvert {stream_name}_[].txt {stream_name}.tck"
