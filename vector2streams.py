@@ -43,7 +43,8 @@ def vectorfield2streams_2d(x, y, gX, gY, seeds, slice_n, side= 'l',
     elif start_line=='inline': int_dir = 'backward'
     streams = []
     fig = plt.figure()
-    for seed in seeds:
+    for i,seed in enumerate(seeds):
+        #print(f'{seed}')
         strm = plt.streamplot(x.T[0], y[0],
                   gX[:,:,slice_n].T, gY[:,:, slice_n].T,
                   linewidth=1, density=20,
@@ -56,6 +57,9 @@ def vectorfield2streams_2d(x, y, gX, gY, seeds, slice_n, side= 'l',
         shp = np.shape(lines)
         if shp[1] > 0:
             streams.append(lines[0])
+            #print(f'seed = {seed.reshape([1,2])}\n')
+        else:
+            print(f'Streamline {i} is empty. seed: {seed}')
     
     plt.close(fig)
     return streams
@@ -96,7 +100,7 @@ if __name__ == "__main__":
     out_dir = dirname(stream_name)
     
     if not isdir(out_dir):
-        print(f"\n    vector2streams.py: Directory '{out_dir}' doesn't exists\n")
+        print(f"\n    vector2streams.py: Directory '{out_dir}' doesn't exist\n")
         quit()
     
     img_RGB = nib.load(minc_RGB).get_fdata()
@@ -113,10 +117,8 @@ if __name__ == "__main__":
     #breakpoint()
     # add z-coordinate & save
     #pdb.set_trace()
-    np.shape(streams_2d)
     for i, st in enumerate(streams_2d):
-        print(f'xxxx')
-        print(f' {i}\n')
+        #print(f'{i}')
         #breakpoint()
         #st = streams_2d[i+1] # this is stupid, since we're using enumerate, but I am off by one
         ones = np.ones([len(st), 1])
