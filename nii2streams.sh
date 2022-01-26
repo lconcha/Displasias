@@ -76,7 +76,7 @@ $script_dir/get_seeds.py $outline $dir_name $prefix
 
 # Create streamlines
 mkdir $dir_name/tck
-input1=$dir_name/${prefix}_${side}_minc_RGB.nii.gz
+input1=$dir_name/${prefix}_${side}_minc_thick_RGB.nii.gz
 for seed_file in $dir_name/${prefix}_${side}*_??_seeds_smooth_resampled.txt;
 do
   IFS='_' read -ra split_name <<< "$seed_file"
