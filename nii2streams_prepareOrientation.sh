@@ -6,7 +6,7 @@ help(){
   echo "
 
 How to use:
-  `basename $0` <lines.nii.gz> <rat> <outfolder>
+  `basename $0` <lines.nii.gz> <t2.nii.gz> <rat>  <outfolder>
 
 
 LU15 (0N(H4
@@ -17,7 +17,7 @@ lconcha@unam.mx
 }
 
 
-if [ $# -lt 3 ]
+if [ $# -lt 4 ]
 then
   echolor red "Not enough arguments"
 	help
@@ -26,24 +26,23 @@ fi
 
 
 lines=$1
-rat=$2
-outfolder=$3
+t2=$2
+rat=$3
+outfolder=$4
 
 
 tmpDir=`mktemp -d`
 
+
+# modify strides of the lines
 plines=${outfolder}/lines.nii.gz
-
-
 size1=$(mrinfo -size $lines | awk '{print $1}')
 size2=$(mrinfo -size $lines | awk '{print $2}')
 size3=$(mrinfo -size $lines | awk '{print $3}')
-
-
 echolor yellow "sizes: $size1 $size2 $size3"
 if [ $size2 -lt $size3 ]
 then
-  echolor cyan "Warning: size2 is larger than size3. Will permute dimensions"
+  echolor cyan "Warning: size2 is larger than size3. Will permute dimensions of lines"
   my_do_cmd mrconvert -axes 0,2,1 \
             -strides 1,2,3 \
             $lines \
@@ -53,6 +52,15 @@ then
 else
   cp $lines ${tmpDir}/plines.nii.gz
 fi
+
+
+# make sure the T2 has the same geometry
+my_do_cmd mrconvert $t2 ${outfolder}/${rat}_t2.nii.gz
+my_do_cmd fslcpgeom ${tmpDir}/plines.nii.gz ${outfolder}/${rat}_t2.nii.gz
+
+
+
+
 
 nSlices=$(mrinfo -size ${tmpDir}/plines.nii.gz | awk '{print $3}')
 echolor yellow "There are $nSlices slices"
