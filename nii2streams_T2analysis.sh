@@ -31,6 +31,13 @@ rat=$3
 outfolder=$4
 
 
+if [ ! -d $outfolder ]
+then
+  echolor red "ERROR  Output directory does not exist: $outfolder"
+  exit 2
+fi
+
+
 
 # prepare orientation and separate slices
 nii2streams_prepareOrientation.sh $lines $t2 $rat $outfolder
