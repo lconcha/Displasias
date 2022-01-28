@@ -2,7 +2,7 @@
 source `which my_do_cmd`
 
 if [ "$1" == "-h" -o "$1" == "--help" -o "$1" == "" ]; then
-  echo -e "\n	Usage: `basename $0` grid (.mnc or .nii) [suffix_str] [alpha]"
+  echo -e "\n	Usage: `basename $0` grid (.mnc or .nii) [suffix_str] [alpha] [niter]"
   echo -e "\n	Runs 'my_MincLaplaceDist' on the given grid."
   echo -e "\n	Returns '_grid_123.nii.gz' & '_grid_123.mnc'.\n"
   exit 0
@@ -11,6 +11,7 @@ fi
 input_grid=$1
 suffix=${2:-''}
 alpha=${3:-0.1}
+niter=${4:-200}
 
 # String before patern '_grid'
 outputname=${input_grid%_grid*}_minc${suffix}
@@ -34,9 +35,16 @@ fi
 echo -e "\n    Creating grid: '${outputname}' \n"
 my_mincL=`dirname $0`"/my_MincLaplaceDist"
 
-$my_mincL -i ${filename}.mnc -o ${outputname} -like ${filename}.mnc -alpha $alpha
+## Where the magic happens
+echolor cyan "Running minclaplace!"
+my_do_cmd $my_mincL \
+  -i ${filename}.mnc \
+  -o ${outputname} \
+  -like ${filename}.mnc \
+  -alpha $alpha \
+  -max_iter $niter
+echolor cyan "Finished running minclaplace."
 
-echo "alpha weight = " $alpha
 
 mnc2nii ${outputname}_GradX.mnc ${outputname}_GradX.nii 
 mnc2nii ${outputname}_GradY.mnc ${outputname}_GradY.nii
