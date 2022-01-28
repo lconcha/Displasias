@@ -56,7 +56,7 @@ $script_dir/make_grid.sh $input1 $input2
 # Run 'mincLaplace' to generate `*_minc_thick_*.nii`:
 input1=$dir_name/${prefix}_${side}_grid_123.mnc
 echo -e "\n  Running: run_grid.sh $input1 '_thick'"
-$script_dir/run_grid.sh $input1 '_thick'
+$script_dir/run_grid.sh $input1 '_thick' 0.1 50
 
 # Apply cortical mask `*_mid.nii.gz*` to `*_Grad[X-Z].nii`:
 input1=$dir_name/${prefix}_${side}_grid_mid.nii.gz
