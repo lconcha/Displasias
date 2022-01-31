@@ -67,11 +67,11 @@ then
             -strides 1,2,3 \
             $t2 \
             ${tmpDir}/t2_wtransf.nii.gz
-  my_do_cmd mrtransform -quiet -identity ${tmpDir}/t2_wtransf.nii.gz ${outfolder}/t2.nii.gz
+  my_do_cmd mrtransform -quiet -identity ${tmpDir}/t2_wtransf.nii.gz ${outfolder}/${rat}_t2.nii.gz
         
 else
   cp $lines ${tmpDir}/plines.nii.gz
-  cp $t2 ${outfolder}/t2.nii.gz
+  cp $t2 ${outfolder}/${rat}_t2.nii.gz
 fi
 
 
