@@ -52,7 +52,7 @@ do
     my_do_cmd nii2streams.sh \
         ${outfolder}/${slice}/${rat}_${side}_inline.nii.gz \
         ${outfolder}/${slice}/${rat}_${side}_outline.nii.gz \
-        ${outfolder}/${rat}_t2.nii.gz \
+        ${outfolder}/${rat}_image.nii.gz \
         ${outfolder}/${slice} \
         $side \
         $rat
