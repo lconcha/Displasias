@@ -6,7 +6,7 @@ help(){
   echo "
 
 How to use:
-  `basename $0` <lines.nii.gz> <t2.nii.gz> <rat>  <outfolder>
+  `basename $0` <lines.nii.gz> <image.nii.gz> <rat>  <outfolder>
 
 
 LU15 (0N(H4
@@ -26,7 +26,7 @@ fi
 
 
 lines=$1
-t2=$2
+image=$2
 rat=$3
 outfolder=$4
 
@@ -40,12 +40,12 @@ fi
 tmpDir=`mktemp -d`
 
 
-# first make sure we have the same transformation matrices between t2 and lines
-my_do_cmd mrconvert -quiet $t2 ${tmpDir}/t2.nii.gz 
+# first make sure we have the same transformation matrices between image and lines
+my_do_cmd mrconvert -quiet $image ${tmpDir}/image.nii.gz 
 my_do_cmd mrconvert -quiet $lines ${tmpDir}/lines.nii.gz
-my_do_cmd fslcpgeom ${tmpDir}/lines.nii.gz ${tmpDir}/t2.nii.gz
+my_do_cmd fslcpgeom ${tmpDir}/lines.nii.gz ${tmpDir}/image.nii.gz
 lines=${tmpDir}/lines.nii.gz
-t2=${tmpDir}/t2.nii.gz
+image=${tmpDir}/image.nii.gz
 
 
 # modify strides
@@ -62,25 +62,25 @@ then
             $lines \
             ${tmpDir}/plines_wtransf.nii.gz
   my_do_cmd mrtransform -quiet -identity ${tmpDir}/plines_wtransf.nii.gz ${tmpDir}/plines.nii.gz
-  echolor cyan "Warning: Also permuting dimensions of t2"
+  echolor cyan "Warning: Also permuting dimensions of image"
   my_do_cmd mrconvert -quiet -axes 0,2,1 \
             -strides 1,2,3 \
-            $t2 \
-            ${tmpDir}/t2_wtransf.nii.gz
-  my_do_cmd mrtransform -quiet -identity ${tmpDir}/t2_wtransf.nii.gz ${outfolder}/${rat}_t2.nii.gz
+            $image \
+            ${tmpDir}/image_wtransf.nii.gz
+  my_do_cmd mrtransform -quiet -identity ${tmpDir}/image_wtransf.nii.gz ${outfolder}/${rat}_image.nii.gz
         
 else
   my_do_cmd cp $lines ${tmpDir}/plines.nii.gz
-  my_do_cmd cp $t2 ${outfolder}/${rat}_t2.nii.gz
+  my_do_cmd cp $image ${outfolder}/${rat}_image.nii.gz
 fi
 
 
 
 
 
-# make sure the T2 has the same geometry
-#my_do_cmd mrconvert -quiet $t2 ${outfolder}/${rat}_t2.nii.gz
-#my_do_cmd fslcpgeom ${tmpDir}/plines.nii.gz ${outfolder}/${rat}_t2.nii.gz
+# make sure the image has the same geometry
+#my_do_cmd mrconvert -quiet $image ${outfolder}/${rat}_image.nii.gz
+#my_do_cmd fslcpgeom ${tmpDir}/plines.nii.gz ${outfolder}/${rat}_image.nii.gz
 
 
 
@@ -119,5 +119,9 @@ mrcat -quiet -axis 3 \
 
 #echolor cyan "Try running, for example:
 # nii2streams.sh ${outfolder}/${rat}_l_inline.nii.gz ${outfolder}/${rat}_l_outline.nii.gz ${outfolder}/${rat}_l_inline.nii.gz ${outfolder} l $rat"
+
+
+# just for good measure, copy the original unpermuted image
+mrconvert $image ${outfolder}/image_native.nii.gz
 
 rm -fR $tmpDir
