@@ -29,29 +29,22 @@ fi
 
 # defaults
 image=""
+refimage=""
 
 while getopts r: flag
 do
     case "${flag}" in
         r) image=${OPTARG}
-        shift 2;;
-        p) order=${OPTARG}
-        shift 2;;
+           refimage="-image2scanner $image"
+           shift 2;;
     esac
 done
 
-
-refimage=""
-if [ ! -z "${image}" ]
-then
-  refimage="-image2scanner $image"
-fi
-
-
-
 tckin=$1
 tckout=$2
-refimage=$3
+
+
+
 
 tmpDir=`mktemp -d`
 
@@ -63,8 +56,11 @@ do
   awk '{print $1,$3,$2}' $f > ${tmpDir}/p_${ff}
 done
 
-my_do_cmd $fakeflag tckconvert ${tmpDir}/p_lines-'[]'.txt \
-  $refimage \
+
+echo "refimage is $refimage"
+my_do_cmd tckconvert \
+  "$refimage" \
+  ${tmpDir}/p_lines-'[]'.txt \
   $tckout
 
 
