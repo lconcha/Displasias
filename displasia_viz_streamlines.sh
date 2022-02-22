@@ -45,6 +45,12 @@ do
   streamlines="${streamlines} -tractography.load $f -tractography.tsf_load $f_linenums -tractography.tsf_load $f_linelengths"
 done
 
+for f in ${outfolder}/??/tck/*_resampled_imagespace.tck
+do
+  streamlines="${streamlines} -tractography.load $f -tractography.geometry points"
+done
+
+
 my_do_cmd  mrview $t2 \
   -interpolation false \
   -mode 2 \
