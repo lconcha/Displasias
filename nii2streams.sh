@@ -1,4 +1,5 @@
 #!/bin/bash
+source `which my_do_cmd`
 
 reset="\e[0m" # reset color
 color="\e[1;33m" # yellow
@@ -56,7 +57,7 @@ $script_dir/make_grid.sh $input1 $input2
 # Run 'mincLaplace' to generate `*_minc_thick_*.nii`:
 input1=$dir_name/${prefix}_${side}_grid_123.mnc
 echo -e "\n  Running: run_grid.sh $input1 '_thick'"
-$script_dir/run_grid.sh $input1 '_thick' 0.1 50
+$script_dir/run_grid.sh $input1 '_thick' 0.1 200
 
 # Apply cortical mask `*_mid.nii.gz*` to `*_Grad[X-Z].nii`:
 input1=$dir_name/${prefix}_${side}_grid_mid.nii.gz
@@ -77,26 +78,32 @@ $script_dir/get_seeds.py $outline $dir_name $prefix
 # Create streamlines
 mkdir $dir_name/tck
 input1=$dir_name/${prefix}_${side}_minc_RGB.nii.gz
-for seed_file in $dir_name/${prefix}_${side}*_??_seeds_smooth_resampled.txt;
+for seed_file in $dir_name/${prefix}_${side}_seeds_smooth_resampled.txt;
 do
-  IFS='_' read -ra split_name <<< "$seed_file"
-  j=${split_name[-4]}   # <- slice_n
-  echolor yellow "  j is $j"#input2=$seed_file
   echolor yellow "  seed_file is $seed_file"
-  input2=$dir_name/${prefix}_${side}_${j}_seeds_smooth_resampled.txt
-  output=$dir_name/tck/${prefix}_${side}_${j}_out
+  input2=$dir_name/${prefix}_${side}_seeds_smooth_resampled.txt
+  output=$dir_name/tck/${prefix}_${side}_out
   echolor cyan "\n  Running: vector2streams.py $input1 $input2 $ref_image $output \n"
   $script_dir/vector2streams.py $input1 $input2 $ref_image $output
 done
 
+# transform seed streamlines to image space
+echolor cyan "Transforming seed streamlines to image space"
+for txt in $dir_name/*_seeds_smooth_resampled.txt
+do
+  if [ -f $dir_name/tck/`basename ${txt%.txt}`_imagespace.tck ]; then continue;fi
+  my_do_cmd tckconvert $txt $dir_name/tck/`basename ${txt%.txt}`_imagespace.tck -voxel2scanner $ref_image
+done
+
+
 # zip .txt files (-v to verbose)
-tar -czf $dir_name/tck/${prefix}_${side}_${j}_out.tar.gz $dir_name/tck/${prefix}_${side}_${j}_out_*.txt
+tar -czf $dir_name/tck/${prefix}_${side}_out.tar.gz $dir_name/tck/${prefix}_${side}_out_*.txt
 
 # remove '*.txt'
-rm $dir_name/tck/${prefix}_${side}_${j}_out_???.txt
+rm $dir_name/tck/${prefix}_${side}_out_???.txt
 
 # Check streamlines:
 echo -e "\n  ${color}To check created streamlines run:\n${reset}"
-echo -e "    mrview $ref_image -tractography.load $dir_name/tck/${prefix}_${side}_${j}_out_resampled.tck -plane 2 -fullscreen & \n"
+echo -e "    mrview $ref_image -tractography.load $dir_name/tck/${prefix}_${side}_out_resampled.tck -plane 2 -fullscreen & \n"
 
-printf \\a; sleep 0.1; printf \\a # sound in bash
+#printf \\a; sleep 0.1; printf \\a # sound in bash
