@@ -70,9 +70,12 @@ then
   my_do_cmd mrtransform -quiet -identity ${tmpDir}/t2_wtransf.nii.gz ${outfolder}/${rat}_t2.nii.gz
         
 else
-  cp $lines ${tmpDir}/plines.nii.gz
-  cp $t2 ${outfolder}/${rat}_t2.nii.gz
+  my_do_cmd cp $lines ${tmpDir}/plines.nii.gz
+  my_do_cmd cp $t2 ${outfolder}/${rat}_t2.nii.gz
 fi
+
+
+
 
 
 # make sure the T2 has the same geometry
@@ -112,7 +115,7 @@ done
 mrcat -quiet -axis 3 \
   $outfolder/??/${rat}_?_inline.nii.gz \
   $outfolder/??/${rat}_?_outline.nii.gz - | \
-  mrmath -quiet -axis 3 - max ${outfolder}/lines.nii.nii.gz
+  mrmath -quiet -axis 3 - max ${outfolder}/lines.nii.gz
 
 #echolor cyan "Try running, for example:
 # nii2streams.sh ${outfolder}/${rat}_l_inline.nii.gz ${outfolder}/${rat}_l_outline.nii.gz ${outfolder}/${rat}_l_inline.nii.gz ${outfolder} l $rat"
