@@ -51,7 +51,7 @@ def get_seeds_from_nii(f_name, subject, side='l', smooth=False, save=True, s=0.1
     lines_volume = nib.load(f_name).get_fdata()
     
     seeds_dict = {}
-    for slice_n in range(10,16):
+    for slice_n in range(1,lines_volume.shape[2]):
         
         sx, sy = np.array(np.nonzero(lines_volume[:,:,slice_n]))
         seeds = np.array([sx,sy]).T
@@ -67,8 +67,7 @@ def get_seeds_from_nii(f_name, subject, side='l', smooth=False, save=True, s=0.1
         #               remove first entry because of reasons ^
         
         if save:
-            seeds_name = f'{subject}_{side}_{slice_n}_seeds'
-            print(f'\n TEMPORARY\n subject is {subject}\nside is {side}\nslice_n is {slice_n}\n')
+            seeds_name = f'{subject}_{side}_seeds'
             if smooth: seeds_name += '_smooth'
             
             np.savetxt(join(save_folder, basename(seeds_name)+'.txt'), seeds)
