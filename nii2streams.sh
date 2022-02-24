@@ -60,7 +60,11 @@ echo -e "\n  Running: run_grid.sh $input1 '_thick'"
 $script_dir/run_grid.sh $input1 '_thick' 0.1 200
 
 # Apply cortical mask `*_mid.nii.gz*` to `*_Grad[X-Z].nii`:
-input1=$dir_name/${prefix}_${side}_grid_mid.nii.gz
+# first remove the voxel that forms the inline (wm/gm boundary)
+mrcalc $inline 0 -eq \
+  $dir_name/${prefix}_${side}_grid_mid.nii.gz -mul \
+  $dir_name/${prefix}_${side}_grid_mid_noinline.nii.gz
+input1=$dir_name/${prefix}_${side}_grid_mid_noinline.nii.gz
 for a in GradX GradY GradZ RGB
 do
   input2=$dir_name/${prefix}_${side}_minc_thick_${a}.nii.gz
