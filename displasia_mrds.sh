@@ -183,7 +183,7 @@ for f in ${outbase}_slice_${s}_MRDS_*.nii
 do
   ff=${f#*_MRDS}
   ls ${outbase}_slice_*_MRDS${ff}
-  echo INCOMPLETE
+  echo mrcat -axis 1 ${outbase}_slice_*_MRDS${ff} ${outbase}_MRDS${ff}
 done
 
 
