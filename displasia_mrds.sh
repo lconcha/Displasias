@@ -177,6 +177,16 @@ do
     -method diff 1
 done
 
+echolor yellow "[INFO] Concatenating the results from the different slices."
+s=$(awk '{print $1}' $slicesfile )
+for f in ${outbase}_slice_${s}_MRDS_*.nii
+do
+  ff=${f#*_MRDS}
+  ls ${outbase}_slice_*_MRDS${ff}
+  echo INCOMPLETE
+done
+
+
 ls $tmpDir
 
 rm -fR $tmpDir
