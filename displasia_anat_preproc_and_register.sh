@@ -2,10 +2,14 @@
 source `which my_do_cmd`
 fakeflag=""
 
+echo ----------------------------
+date
+echo $0 $@
+echo ----------------------------
+
 grp=$1
 rat=$2
 day=$3
-
 
 imagesdir=/misc/carr2/paulinav/Displasia_project
 
@@ -34,26 +38,42 @@ if (file $im_orig | grep -q compressed ) ; then
 
 fi
 
+outdir=${imagesdir}/${grp}/${rat}/${day}/derivatives/anat
+if [ ! -d $outdir ]
+then
+  mkdir -p $outdir
+fi
 
 
 echolor cyan "[INFO] Performing pre-processing."
 my_do_cmd $fakeflag inb_rat_preproc_anat.sh \
   -i $im_orig \
-  -o ${tmpDir}/preproc \
+  -o ${outdir}/${rat}_${day}_${grp}_preproc \
   -d /misc/mansfield/lconcha/exp/ratAtlas/fischer344/Fischer344_nii_v4
 
 
-im_preproc=${tmpDir}/preproc_biascorrected_denoised.nii
+im_preproc=${outdir}/${rat}_${day}_${grp}_preproc_biascorrected_denoised.nii
 
 echolor cyan "[INFO] Performing registration to atlas, masking, and further bias field correction"
 my_do_cmd $fakeflag inb_rat_anat2atlas.sh \
+  -n \
   -i $im_preproc \
-  -o ${tmpDir}/reg \
-  -d /misc/mansfield/lconcha/exp/ratAtlas/fischer344/Fischer344_nii_v4
+  -o ${outdir}/${rat}_${day}_${grp}_reg \
+  -d /misc/mansfield/lconcha/exp/ratAtlas/fischer344/Fischer344_nii_v4 \
 
 
+mv ${outdir}/${rat}_${day}_${grp}_reg_native_nlin_biascorrected.nii.gz ${tmpDir}/native.nii.gz
+refstrides=$(mrinfo -strides $im_orig | tr ' ' ',')
+my_do_cmd mrconvert \
+  -strides $refstrides \
+  ${tmpDir}/native.nii.gz \
+  ${tmpDir}/native_strides.nii.gz
+my_do_cmd fslcpgeom $im_orig ${tmpDir}/native_strides.nii.gz
+my_do_cmd mrconvert \
+  ${tmpDir}/native_strides.nii.gz \
+  ${outdir}/${rat}_${day}_${grp}_reg_native_nlin_biascorrected.nii.gz
 
 ls  $tmpDir/*
 
 rm -fR $tmpDir
-
+date
