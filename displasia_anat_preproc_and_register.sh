@@ -73,7 +73,7 @@ my_do_cmd mrconvert \
   ${tmpDir}/native_strides.nii.gz \
   ${outdir}/${rat}_${day}_${grp}_reg_native_nlin_biascorrected.nii.gz
 
-ls  $tmpDir/*
+gzip ${outdir}/*.nii
 
 rm -fR $tmpDir
 date
