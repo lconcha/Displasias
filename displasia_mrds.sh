@@ -126,10 +126,10 @@ echolor yellow "  $response"
 
 
 
-
+nSlices=$(cat $slicesfile | tr ' ' '\n' | wc -l)
 for s in $(cat $slicesfile)
 do
-  echolor cyan "[INFO] Working on slice $s"
+  echolor cyan "[INFO] Working on slice $s of $nSlices"
   dwi=${dwi_folder}/${grp}/${rat}/${day}/slice_${s}/${rat}_${day}_${grp}_hibval_deb.nii.gz
   bvec=${dwi%.nii.gz}.bvec
   bval=${dwi%.nii.gz}.bval
@@ -178,12 +178,19 @@ do
 done
 
 echolor yellow "[INFO] Concatenating the results from the different slices."
+# create a blank file
+mrcalc $corticalmask 0 -mul ${tmpDir}/blank.nii
 s=$(awk '{print $1}' $slicesfile )
 for f in ${outbase}_slice_${s}_MRDS_*.nii
 do
-  ff=${f#*_MRDS}
-  ls ${outbase}_slice_*_MRDS${ff}
-  echo mrcat -axis 1 ${outbase}_slice_*_MRDS${ff} ${outbase}_MRDS${ff}
+  #ff=${f#*_MRDS}
+  #ls ${outbase}_slice_*_MRDS${ff}
+  #echo mrcat -axis 1 ${outbase}_slice_*_MRDS${ff} ${outbase}_MRDS${ff}
+  # what we need to do is add them up to a blank file.
+  nFilesToAdd=$(ls ${outbase}_slice_*_MRDS${ff} ${outbase}_MRDS${ff} | wc -l)
+  nAdd=""
+  for i in $(seq 1 $nFilesToAdd); do nAdd="$nAdd -add";done
+  my_do_cmd mrcalc $blank ${outbase}_slice_*_MRDS${ff} $nAdd ${outbase}_MRDS${ff}
 done
 
 
