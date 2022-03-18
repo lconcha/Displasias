@@ -2,6 +2,55 @@
 source `which my_do_cmd`
 fakeflag=""
 
+imagesdir=/misc/carr2/paulinav/Displasia_project
+
+
+
+help(){
+  echo "
+
+How to use:
+`basename $0` <group> <rat> <day>
+
+Perform N4 bias field correction and brain masking using ANTS.
+It is slow.
+
+The script wraps inb_rat_preproc_anat.sh and inb_rat_anat2atlas.sh
+The script is hard-coded to work with the folder organization designed by Pau Villaseñor.
+Such folder is located in $imagesdir
+
+Arguments:
+group: CTRL or BCNU
+rat:   64A, 67B, etc
+day:   30, 60, 120, 150
+
+The script will automatically find the file:
+im_orig=${imagesdir}/\${grp}/\${rat}/\${day}/\${rat}_\${day}_\${grp}_T2_regrid.nii.gz
+
+Output files will be in a new folder called derivatives/anat within the original input folder.
+
+LU15 (0N(H4
+INB UNAM
+March 2022
+lconcha@unam.mx
+  "
+}
+
+
+if [ $# -lt 3 ]
+then
+  echolor red "Not enough arguments"
+  help
+  exit 2
+fi
+
+
+
+
+
+
+
+
 echo ----------------------------
 date
 echo $0 $@
@@ -11,7 +60,6 @@ grp=$1
 rat=$2
 day=$3
 
-imagesdir=/misc/carr2/paulinav/Displasia_project
 
 im_orig=${imagesdir}/${grp}/${rat}/${day}/${rat}_${day}_${grp}_T2_regrid.nii.gz
 
