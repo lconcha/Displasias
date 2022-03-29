@@ -1,6 +1,14 @@
 #!/bin/bash
 source `which my_do_cmd`
 
+
+
+imagesdir=/misc/carr2/paulinav/Displasia_project
+dwi_folder=$imagesdir
+corticalmask_folder=/misc/nyquist/lconcha/displasia_streamlines_dwi/corticalmasks
+
+
+
 help(){
   echo "
 
@@ -14,20 +22,9 @@ folder structure that separates each slice and eliminates signal outliers.
 -------------------
 
 
-Please allow around one hour per slice analyzed.
+To use:
 
-Uses multi-threading, avoid running multiple jobs at the same time.
-
-
-How to use:
-  `basename $0` <dwi_folder> <outbase>
-
-
-Note:    MRDS cannot handle DWI data sets without b=0 volumes. 
-         The Bruker scanner provides bvals that include diffusion gradient sensitization
-         from all gradients, including the spatial encoding gradients and crushers, and
-         therefore there are no b=0 bvals, but rather a very small b value (e.g b=28 s/mm2).
-         This script will automatically find the lowest bvalue and turn it to zero.
+`basename $0` <grp> <rat> <day>
 
 
 This script wraps the MRDS functions by Ricardo Coronado.To cite:
@@ -46,30 +43,42 @@ lconcha@unam.mx
 }
 
 
-if [ $# -lt 6 ]
+if [ $# -lt 3 ]
 then
   echolor red "Not enough arguments"
 	help
   exit 2
 fi
 
+grp=$1
+rat=$2
+day=$3
+outdir=${imagesdir}/${grp}/${rat}/${day}/derivatives/dwi
+outbase=${outdir}/${rat}_${day}_${grp}
 
 
+echolor yellow "[INFO] Starting to work"
+echolor yellow "
+  imagesdir:           $imagesdir
+  dwi_folder:          $dwi_folder
+  corticalmask_folder: $corticalmask_folder
+  grp:                 $grp
+  rat:                 $rat
+  day:                 $day
+  outdir:              $outdir
+  outbase:             $outbase"
+date
+hostname
 
-dwi_folder=$1
-corticalmask_folder=$2
-grp=$3
-rat=$4
-day=$5
-outbase=$6
 
 dwi_full=${dwi_folder}/${grp}/${rat}/${day}/${rat}_${day}_${grp}_hibval_de.nii.gz
 bvec_full=${dwi_full%.nii.gz}.bvec
 bval_full=${dwi_full%.nii.gz}.bval
 slicesfile=${dwi_folder}/${grp}/${rat}/${day}/${rat}_${day}.selected_slices
+corticalmask=${corticalmask_folder}/${rat}_${day}_${grp}_corticalmask.nii.gz
 
 isOK=1
-for f in $dwi_full $bvec_full $bval_full $slicesfile
+for f in $dwi_full $bvec_full $bval_full $slicesfile $corticalmask
 do
   if [ ! -f $f ]; then isOK=0; echolor red "[ERROR] Did not find $f";continue;fi
   echolor yellow "[INFO] Found $f"
@@ -77,6 +86,12 @@ done
 
 if [ $isOK -eq 0 ]; then exit 2; fi
 
+
+
+if [ ! -d $outdir ]
+then
+  mkdir -p $outdir
+fi
 
 
 
@@ -130,13 +145,13 @@ nSlices=$(cat $slicesfile | tr ' ' '\n' | wc -l)
 for s in $(cat $slicesfile)
 do
   echolor cyan "[INFO] Working on slice $s of $nSlices"
-  dwi=${dwi_folder}/${grp}/${rat}/${day}/slice_${s}/${rat}_${day}_${grp}_hibval_deb.nii.gz
+  dwi=${dwi_folder}/${grp}/${rat}/${day}/derivatives/dwi/slice_${s}/${rat}_${day}_${grp}_hibval_deb.nii.gz
   bvec=${dwi%.nii.gz}.bvec
   bval=${dwi%.nii.gz}.bval
-  corticalmask=${corticalmask_folder}/${rat}_${day}_${grp}_corticalmask.nii.gz
+  
 
   isOK=1
-  for f in $dwi $bvec $bval $corticalmask
+  for f in $dwi $bvec $bval
   do
     if [ ! -f $f ]; then isOK=0; echolor red "[ERROR] Did not find $f";continue;fi
     echolor yellow "[INFO] Found $f"
@@ -183,15 +198,23 @@ mrcalc $corticalmask 0 -mul ${tmpDir}/blank.nii
 s=$(awk '{print $1}' $slicesfile )
 for f in ${outbase}_slice_${s}_MRDS_*.nii
 do
-  #ff=${f#*_MRDS}
+  ff=${f#*_MRDS}
   #ls ${outbase}_slice_*_MRDS${ff}
-  #echo mrcat -axis 1 ${outbase}_slice_*_MRDS${ff} ${outbase}_MRDS${ff}
   # what we need to do is add them up to a blank file.
-  nFilesToAdd=$(ls ${outbase}_slice_*_MRDS${ff} ${outbase}_MRDS${ff} | wc -l)
+  nFilesToAdd=$(ls ${outbase}_slice_*_MRDS${ff} | wc -l)
+  filesToAdd=$(ls ${outbase}_slice_*_MRDS${ff})
+  echo $nFilesToAdd $ff
   nAdd=""
-  for i in $(seq 1 $nFilesToAdd); do nAdd="$nAdd -add";done
-  my_do_cmd mrcalc $blank ${outbase}_slice_*_MRDS${ff} $nAdd ${outbase}_MRDS${ff}
+  for i in $(seq 2 $nFilesToAdd)
+  do
+    nAdd="$nAdd -add"
+  done
+  mrcalc $blank ${filesToAdd} $nAdd ${outbase}_MRDS${ff}.gz
+  rm $filesToAdd
 done
+
+gzip ${outbase}_*.nii
+
 
 
 ls $tmpDir
