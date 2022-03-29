@@ -11,6 +11,16 @@ dwidir=/misc/carr2/paulinav/Displasia_project
 linesdir=/misc/nyquist/lconcha/displasia_streamlines_dwi
 corticalmasksdir=/misc/nyquist/lconcha/displasia_streamlines_dwi/corticalmasks
 
+
+
+if [ -f ${corticalmasksdir}/${rat}_${day}_${grp}_corticalmask.nii.gz ]
+then
+  echolor green "[INFO] Mask exists, not overwriting."
+  echolor green "       ${corticalmasksdir}/${rat}_${day}_${grp}_corticalmask.nii.gz"
+  exit 0
+fi
+
+
 tmpDir=$(mktemp -d)
 
 dwis=${dwidir}/${grp}/${rat}/${day}/${rat}_${day}_${grp}_hibval_deb
