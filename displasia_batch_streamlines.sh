@@ -1,5 +1,5 @@
 #!/bin/bash
-
+source `which my_do_cmd`
 #linesdir=/misc/nyquist/lconcha/displasia_streamlines_dwi
 
 
@@ -38,7 +38,10 @@ do
       lines=${imagesdir}/${grp}/${rat}/${day}/anat/lines.nii.gz
       t2=${imagesdir}/${grp}/${rat}/${day}/anat/T2_regrid.nii.gz
       outfolder=${imagesdir}/${grp}/${rat}/${day}/derivatives/anat
-      echo fsl_sub -N anat_${rat}-${day} \
+      mkdir -p $outfolder
+      my_do_cmd fsl_sub -N anat_${rat}-${day} \
+           -l /misc/nyquist/lconcha/logs \
+           -s smp,4 \
            nii2streams_brkraw_analysis.sh \
            $lines \
            $t2 \
