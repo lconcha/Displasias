@@ -76,8 +76,8 @@ done
 
 # Generate seed points for streamlines
 #input1=$dir_name/${prefix}_${side}_outline.nii.gz
-echolor cyan "\n  Running: get_seeds.py $outline $dir_name $prefix"
-$script_dir/get_seeds.py $outline $dir_name $prefix
+echolor cyan "\n  Running: get_seeds.py $outline $dir_name $prefix $side"
+$script_dir/get_seeds.py $outline $dir_name $prefix $side
 
 # Create streamlines
 mkdir $dir_name/tck

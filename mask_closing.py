@@ -97,6 +97,7 @@ if __name__ == "__main__":
     prefix = args.prefix
     s = args.side
 
+
     if s==None: s = inline.split('.')[0].split('_')[-2]
 
     # output filenames inline.split('.')[0][:-7]

@@ -5,7 +5,7 @@ help(){
   echo "
 
 How to use:
-  `basename $0` <lines.nii.gz> <image.nii.gz> <rat>  <outfolder>
+  `basename $0` <lines.nii.gz> <image.nii.gz>  <outfolder> <prefix>
 
 
 LU15 (0N(H4
@@ -27,8 +27,8 @@ fi
 
 lines=$1
 t2=$2
-rat=$3
-outfolder=$4
+outfolder=$3
+prefix=$4
 
 
 if [ ! -d $outfolder ]
@@ -40,7 +40,7 @@ fi
 
 
 # prepare orientation and separate slices
-nii2streams_prepareOrientation.sh $lines $t2 $rat $outfolder
+nii2streams_prepareOrientation.sh $lines $t2 $outfolder
 
 for ss in `ls -d $outfolder/??`
 do
@@ -50,12 +50,12 @@ do
   for side in $sides
   do
     my_do_cmd nii2streams.sh \
-        ${outfolder}/${slice}/${rat}_${side}_inline.nii.gz \
-        ${outfolder}/${slice}/${rat}_${side}_outline.nii.gz \
-        ${outfolder}/${rat}_image.nii.gz \
+        ${outfolder}/${slice}/${side}_inline.nii.gz \
+        ${outfolder}/${slice}/${side}_outline.nii.gz \
+        ${outfolder}/image.nii.gz \
         ${outfolder}/${slice} \
         $side \
-        $rat
+        $prefix
   done
 done
 

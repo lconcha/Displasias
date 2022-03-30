@@ -6,18 +6,18 @@ help(){
   echo "
 
 How to use:
-  `basename $0` <lines.nii.gz> <image.nii.gz> <rat>  <outfolder>
+  `basename $0` <lines.nii.gz> <image.nii.gz>  <outfolder>
 
 
 LU15 (0N(H4
 INB UNAM
 Jan 2022
 lconcha@unam.mx
-  "
+"
 }
 
 
-if [ $# -lt 4 ]
+if [ $# -lt 3 ]
 then
   echolor red "Not enough arguments"
 	help
@@ -27,8 +27,7 @@ fi
 
 lines=$1
 image=$2
-rat=$3
-outfolder=$4
+outfolder=$3
 
 if [ ! -d $outfolder ]
 then
@@ -67,11 +66,11 @@ then
             -strides 1,2,3 \
             $image \
             ${tmpDir}/image_wtransf.nii.gz
-  my_do_cmd mrtransform -quiet -identity ${tmpDir}/image_wtransf.nii.gz ${outfolder}/${rat}_image.nii.gz
+  my_do_cmd mrtransform -quiet -identity ${tmpDir}/image_wtransf.nii.gz ${outfolder}/image.nii.gz
         
 else
   my_do_cmd cp $lines ${tmpDir}/plines.nii.gz
-  my_do_cmd cp $image ${outfolder}/${rat}_image.nii.gz
+  my_do_cmd cp $image ${outfolder}/image.nii.gz
 fi
 
 
@@ -108,13 +107,13 @@ do
   my_do_cmd mrcalc -quiet -force ${tmpDir}/plines.nii.gz 0 -mul ${tmpDir}/plane.nii 
   my_do_cmd mredit -quiet -force -plane 2 $s 1 ${tmpDir}/plane.nii
   my_do_cmd mrcalc -quiet -force ${tmpDir}/plane.nii ${tmpDir}/plines.nii.gz -mul ${tmpDir}/plines_one.nii.gz
-  my_do_cmd expand_lines.sh ${tmpDir}/plines_one.nii.gz $rat $outfolder/${s}
+  my_do_cmd expand_lines.sh ${tmpDir}/plines_one.nii.gz $outfolder/${s}
 done
 
 
 mrcat -quiet -axis 3 \
-  $outfolder/??/${rat}_?_inline.nii.gz \
-  $outfolder/??/${rat}_?_outline.nii.gz - | \
+  $outfolder/??/?_inline.nii.gz \
+  $outfolder/??/?_outline.nii.gz - | \
   mrmath -quiet -axis 3 - max ${outfolder}/lines.nii.gz
 
 #echolor cyan "Try running, for example:

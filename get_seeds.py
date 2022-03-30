@@ -47,7 +47,7 @@ def smooth_curve(x, y, s=0.5):
     return smooth_points
 
 def get_seeds_from_nii(f_name, subject, side='l', smooth=False, save=True, s=0.1, 
-                        save_folder='~/Descargas',):
+                        save_folder='/tmp',):
     lines_volume = nib.load(f_name).get_fdata()
     
     seeds_dict = {}
@@ -89,17 +89,18 @@ if __name__ == "__main__":
     #side = 'l'
     
     #f_name = f'minc/{subject}_{side}_outline.nii' 
-    f_name = sys.argv[1]
+    f_name  = sys.argv[1]
     out_dir = sys.argv[2]
-    prefix = sys.argv[3]
+    prefix  = sys.argv[3]
+    side    = sys.argv[4]
     try:
-        n_seeds = sys.argv[4]
+        n_seeds = sys.argv[5]
     except IndexError:
         n_seeds = 150
     print(f'\n  Using {n_seeds} seeds')
 
     #subject = basename(f_name).split('_')[0]
-    side = basename(f_name).split('_')[1]
+    #side = basename(f_name).split('_')[1]
     #side = basename(basename(f_name).split('_')[1]).split('.')[0]
     seeds = get_seeds_from_nii(f_name, subject=prefix, side=side, smooth=True, save=True,
                                s=10, save_folder=out_dir, )
