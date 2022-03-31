@@ -64,12 +64,15 @@ do
       dwi_lines=${imagesdir}/${grp}/${rat}/${day}/${rat}_${day}_${grp}_seg.nii.gz
       checkandcopy $dwi_lines \
                    ${destfold}/dwi/lines.nii.gz
-      txteddyoutlierss=${preprocdir}/${rat}_${day}_${grp}_hibval_de.qc/${rat}_${day}_${grp}_hibval_de.eddy_outlier_map
-      checkandcopy $txteddyoutlierss \
+      txteddyoutliers=${preprocdir}/${rat}_${day}_${grp}_hibval_de.qc/${rat}_${day}_${grp}_hibval_de.eddy_outlier_map
+      checkandcopy $txteddyoutliers \
                    ${destfold}/derivatives/dwi/eddy_outlier_map
       txtselectedslices=${imagesdir}/${grp}/${rat}/${day}/${rat}_${day}.selected_slices
       checkandcopy $txtselectedslices \
                    ${destfold}/derivatives/dwi/selected_slices
+      txteddyoutlierreport=${preprocdir}/${rat}_${day}_${grp}_hibval_de.qc/${rat}_${day}_${grp}_hibval_de.eddy_outlier_report
+      checkandcopy $txteddyoutlierreport \
+                   ${destfold}/derivatives/dwi/eddy_outlier_report
              
 
 
