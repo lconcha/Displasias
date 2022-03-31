@@ -10,6 +10,7 @@ errorlog=displasia_organize_all_errorlog.txt
 imagesdir=/misc/carr2/paulinav/Displasia_project
 dwistreamlinesdir=/misc/nyquist/lconcha/displasia_streamlines_dwi
 corticalmasksdir=/misc/nyquist/lconcha/displasia_streamlines_dwi/corticalmasks
+preprocdir=/misc/nyquist/lconcha/paulinav_preproc/preproc
 
 errorlog=displasia_move_files_errorlog.txt
 if [ -f $errorlog ]; then rm $errorlog;fi
@@ -63,7 +64,12 @@ do
       dwi_lines=${imagesdir}/${grp}/${rat}/${day}/${rat}_${day}_${grp}_seg.nii.gz
       checkandcopy $dwi_lines \
                    ${destfold}/dwi/lines.nii.gz
-
+      txteddyoutlierss=${preprocdir}/${rat}_${day}_${grp}_hibval_de.qc/${rat}_${day}_${grp}_hibval_de.eddy_outlier_map
+      checkandcopy $txteddyoutlierss \
+                   ${destfold}/derivatives/dwi/eddy_outlier_map
+      txtselectedslices=${imagesdir}/${grp}/${rat}/${day}/${rat}_${day}.selected_slices
+      checkandcopy $txtselectedslices \
+                   ${destfold}/derivatives/dwi/selected_slices
              
 
 
