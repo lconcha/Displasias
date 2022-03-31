@@ -1,29 +1,6 @@
 #!/bin/bash
 source `which my_do_cmd`
-#linesdir=/misc/nyquist/lconcha/displasia_streamlines_dwi
-
-
-#for f in /misc/carr2/paulinav/Displasia_project/*/*/{30,60,120,150}/*_seg.nii.gz
-#do
-#  ff=$(basename $f)
-#  #echo $ff
-# rat=$(echo $ff | awk -F_ '{print $1}')
-#  day=$(echo $ff | awk -F_ '{print $2}')
-#  grp=$(echo $ff | awk -F_ '{print $3}')
-#  echolor yellow  "[INFO] Rat: $rat    Day: $day    Group: $grp"
-#  testfile=$(ls ${linesdir}/${grp}/${rat}/${day}/*/*_smooth.tck | tail -n 1)
-#  if [ -z "$testfile" ]
-#  then
-#     echolor yellow "[INFO] Working on ${grp} ${rat} ${day}"
-#     mkdir -p ${linesdir}/${grp}/${rat}/${day}
-#     fsl_sub -N r${rat}-${day} nii2streams_brkraw_analysis.sh $f $f ${rat}-${day} ${linesdir}/${grp}/${rat}/${day}
-#   else
-#     echolor green "[INFO] Already processed, found:"
-#     echolor green "       $testfile"
-#     continue 
-#  fi
-  
-#done
+fakeflag=""
 
 imagesdir=/misc/nyquist/lconcha/displasia
 for grp in CTRL BCNU
@@ -35,18 +12,48 @@ do
     do
       day=$(basename $dd)
       echolor yellow "[INFO] Working on $grp $rat $day"
-      lines=${imagesdir}/${grp}/${rat}/${day}/anat/lines.nii.gz
-      t2=${imagesdir}/${grp}/${rat}/${day}/anat/T2_regrid.nii.gz
-      outfolder=${imagesdir}/${grp}/${rat}/${day}/derivatives/anat
-      mkdir -p $outfolder
-      my_do_cmd fsl_sub -N anat_${rat}-${day} \
-           -l /misc/nyquist/lconcha/logs \
-           -s smp,4 \
-           nii2streams_brkraw_analysis.sh \
-           $lines \
-           $t2 \
-           $outfolder \
-           anat
+
+      echolor yellow "[INFO] Running streamlines on T2 space"
+      testfile=$(ls ${imagesdir}/${grp}/${rat}/${day}/derivatives/anat/??/tck/anat_?_seeds_smooth_resampled_imagespace_native.tck 2>/dev/null | tail -n 1)
+      if [ ! -z "$testfile" -a -f $testfile ]
+      then
+        echolor green "[INFO] Anat Streamlines already exist. Found $testfile"
+      else
+        lines=${imagesdir}/${grp}/${rat}/${day}/anat/lines.nii.gz
+        t2=${imagesdir}/${grp}/${rat}/${day}/anat/T2_regrid.nii.gz
+        outfolder=${imagesdir}/${grp}/${rat}/${day}/derivatives/anat
+        mkdir -p $outfolder
+        my_do_cmd $fakeflag  fsl_sub -N anat_${rat}-${day} \
+            -l /misc/nyquist/lconcha/logs \
+            -s smp,4 \
+            nii2streams_brkraw_analysis.sh \
+            $lines \
+            $t2 \
+            $outfolder \
+            anat
+     fi
+
+
+      echolor yellow "[INFO] Running streamlines on DWI space"
+      testfile=$(ls ${imagesdir}/${grp}/${rat}/${day}/derivatives/dwi/??/tck/dwi_?_seeds_smooth_resampled_imagespace_native.tck 2>/dev/null | tail -n 1)
+      if [ ! -z "$testfile" -a -f $testfile ]
+      then
+        echolor green "[INFO] DWI Streamlines already exist. Found $testfile"
+      else
+        lines=${imagesdir}/${grp}/${rat}/${day}/dwi/lines.nii.gz
+        dwi=${imagesdir}/${grp}/${rat}/${day}/dwi/dwi_hibval_deb.nii.gz
+        outfolder=${imagesdir}/${grp}/${rat}/${day}/derivatives/dwi
+        mkdir -p $outfolder
+        my_do_cmd $fakeflag fsl_sub -N anat_${rat}-${day} \
+            -l /misc/nyquist/lconcha/logs \
+            -s smp,4 \
+            nii2streams_brkraw_analysis.sh \
+            $lines \
+            $lines \
+            $outfolder \
+            dwi
+     fi
+
     done
   done
 done
