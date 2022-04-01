@@ -6,24 +6,13 @@ grp=$1
 rat=$2
 day=$3
 
-
-dwidir=/misc/carr2/paulinav/Displasia_project
-linesdir=/misc/nyquist/lconcha/displasia_streamlines_dwi
-corticalmasksdir=/misc/nyquist/lconcha/displasia_streamlines_dwi/corticalmasks
-
-
-
-if [ -f ${corticalmasksdir}/${rat}_${day}_${grp}_corticalmask.nii.gz ]
-then
-  echolor green "[INFO] Mask exists, not overwriting."
-  echolor green "       ${corticalmasksdir}/${rat}_${day}_${grp}_corticalmask.nii.gz"
-  exit 0
-fi
+imagesdir=/misc/nyquist/lconcha/displasia
 
 
 tmpDir=$(mktemp -d)
 
-dwis=${dwidir}/${grp}/${rat}/${day}/${rat}_${day}_${grp}_hibval_deb
+
+dwis=${imagesdir}/${grp}/${rat}/${day}/dwi/dwi_hibval_deb
 
 my_do_cmd $fakeflag dwi2mask \
   -fslgrad ${dwis}.{bvec,bval,nii.gz} \
@@ -36,8 +25,9 @@ my_do_cmd $fakeflag tensor2metric -fa ${tmpDir}/fa.nii ${tmpDir}/dt.nii
 
 
 my_do_cmd $fakeflag mrcat -axis 3 \
-  ${grp}/${rat}/${day}/*/${rat}-${day}_?_minc_thick_RGB.nii.gz \
+  ${imagesdir}/${grp}/${rat}/${day}/derivatives/dwi/??/dwi_?_minc_thick_RGB.nii.gz \
   ${tmpDir}/rgb.nii
+  
 
 my_do_cmd $fakeflag mrcalc ${tmpDir}/rgb.nii -abs ${tmpDir}/rgb_abs.nii
 my_do_cmd $fakeflag mrmath -axis 3 ${tmpDir}/rgb_abs.nii sum ${tmpDir}/rgb_sum.nii
@@ -64,12 +54,9 @@ my_do_cmd $fakeflag maskfilter \
   dilate \
   ${tmpDir}/rgb_oriented_bin_masked_dil.nii
 
-
-my_do_cmd $fakeflag mrconvert \
-  ${tmpDir}/fa.nii \
-  ${corticalmasksdir}/${rat}_${day}_${grp}_fa.nii.gz
+p}_fa.nii.gz
 my_do_cmd $fakeflag mrconvert \
   ${tmpDir}/rgb_oriented_bin_masked_dil.nii \
-  ${corticalmasksdir}/${rat}_${day}_${grp}_corticalmask.nii.gz
+  ${imagesdir}/${grp}/${rat}/${day}/derivatives/dwi/corticalmask.nii.gz 
 
 rm -fR $tmpDir
