@@ -2,13 +2,22 @@
 source `which my_do_cmd`
 fakeflag=""
 
-linesdir=/misc/nyquist/lconcha/displasia_streamlines_dwi
+#!/bin/bash
 
-for f in ${linesdir}/*/*/*/lines.nii.gz
+
+
+imagesdir=/misc/carr2/paulinav/Displasia_project
+
+
+for grp in CTRL BCNU
 do
-  ff=$(dirname $f)
-  day=$(echo $ff | awk -F/ '{print $(NF-0)}')
-  rat=$(echo $ff | awk -F/ '{print $(NF-1)}')
-  grp=$(echo $ff | awk -F/ '{print $(NF-2)}')
-  my_do_cmd $fakeflag displasia_prepare_corticalmasks.sh $grp $rat $day
+  for dr in ${imagesdir}/${grp}/*
+  do
+    rat=$(basename $dr)
+    for dd in ${imagesdir}/${grp}/${rat}/*
+    do
+      day=$(basename $dd)
+      displasia_prepare_corticalmasks.sh $grp $rat $day
+    done
+  done
 done
