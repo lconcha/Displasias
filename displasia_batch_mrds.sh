@@ -3,7 +3,7 @@
 
 
 imagesdir=/misc/carr2/paulinav/Displasia_project
-
+logsdir=${imagesdir}/logs
 
 for grp in CTRL BCNU
 do
@@ -14,7 +14,7 @@ do
     do
       day=$(basename $dd)
       echolor cyan "[INFO] Submitting job for $grp $rat $day"
-      fsl_sub -N mrds_${rat}${day} -l logs -s smp,7 displasia_mrds.sh $grp $rat $day
+      fsl_sub -N mrds_${rat}${day} -l $logsdir -s smp,3 displasia_mrds.sh $grp $rat $day
     done
   done
 done

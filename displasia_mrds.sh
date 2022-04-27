@@ -3,9 +3,8 @@ source `which my_do_cmd`
 
 
 
-imagesdir=/misc/carr2/paulinav/Displasia_project
+imagesdir=/misc/nyquist/lconcha/displasia
 dwi_folder=$imagesdir
-corticalmask_folder=/misc/nyquist/lconcha/displasia_streamlines_dwi/corticalmasks
 
 
 
@@ -53,29 +52,26 @@ fi
 grp=$1
 rat=$2
 day=$3
-outdir=${imagesdir}/${grp}/${rat}/${day}/derivatives/dwi
-outbase=${outdir}/${rat}_${day}_${grp}
+
+
 
 
 echolor yellow "[INFO] Starting to work"
-echolor yellow "
-  imagesdir:           $imagesdir
-  dwi_folder:          $dwi_folder
-  corticalmask_folder: $corticalmask_folder
-  grp:                 $grp
-  rat:                 $rat
-  day:                 $day
-  outdir:              $outdir
-  outbase:             $outbase"
 date
 hostname
 
-
-dwi_full=${dwi_folder}/${grp}/${rat}/${day}/${rat}_${day}_${grp}_hibval_de.nii.gz
+ratdir=${imagesdir}/${grp}/${rat}/${day}
+dwi_full=${ratdir}/dwi/dwi_hibval_deb.nii.gz
 bvec_full=${dwi_full%.nii.gz}.bvec
 bval_full=${dwi_full%.nii.gz}.bval
-slicesfile=${dwi_folder}/${grp}/${rat}/${day}/${rat}_${day}.selected_slices
-corticalmask=${corticalmask_folder}/${rat}_${day}_${grp}_corticalmask.nii.gz
+
+
+#dwi_full=${dwi_folder}/${grp}/${rat}/${day}/${rat}_${day}_${grp}_hibval_de.nii.gz
+#bvec_full=${dwi_full%.nii.gz}.bvec
+#bval_full=${dwi_full%.nii.gz}.bval
+slicesfile=${ratdir}/derivatives/dwi/selected_slices
+corticalmask=${ratdir}/derivatives/dwi/corticalmask.nii.gz 
+outbase=${ratdir}/derivatives/dwi/dwi
 
 isOK=1
 for f in $dwi_full $bvec_full $bval_full $slicesfile $corticalmask
@@ -85,15 +81,6 @@ do
 done
 
 if [ $isOK -eq 0 ]; then exit 2; fi
-
-
-
-if [ ! -d $outdir ]
-then
-  mkdir -p $outdir
-fi
-
-
 
 
 tmpDir=`mktemp -d`
@@ -145,7 +132,7 @@ nSlices=$(cat $slicesfile | tr ' ' '\n' | wc -l)
 for s in $(cat $slicesfile)
 do
   echolor cyan "[INFO] Working on slice $s of $nSlices"
-  dwi=${dwi_folder}/${grp}/${rat}/${day}/derivatives/dwi/slice_${s}/${rat}_${day}_${grp}_hibval_deb.nii.gz
+  dwi=${ratdir}/derivatives/dwi/slice_${s}/dwi.nii.gz
   bvec=${dwi%.nii.gz}.bvec
   bval=${dwi%.nii.gz}.bval
   
