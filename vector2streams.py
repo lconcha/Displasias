@@ -55,11 +55,20 @@ def vectorfield2streams_2d(x, y, gX, gY, seeds, slice_n, side= 'l',
         segments = strm.lines.get_segments()
         lines = get_tck_list(segments)
         shp = np.shape(lines)
+        print(f'Now in streamline {i}')
         if shp[1] > 0:
+            print(f'  Streamline {i} is good, seed {seed}')
+            print(f'    shape:  {np.shape(lines)}')
             streams.append(lines[0])
             #print(f'seed = {seed.reshape([1,2])}\n')
         else:
-            print(f'Streamline {i} is empty. seed: {seed}')
+            print(f'  Streamline {i} is empty. seed: {seed}')
+            print(f'    shape:  {np.shape(lines)}')
+            print(f'    Will create a zero-length streamline')
+            lines = np.zeros((1,2,2)) # a streamline with zero-length
+            print(f'    shape:  {np.shape(lines)}')
+            streams.append(lines[0])
+            #breakpoint()
     
     plt.close(fig)
     return streams
