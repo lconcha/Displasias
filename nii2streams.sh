@@ -76,7 +76,8 @@ done
 
 # Generate seed points for streamlines
 #input1=$dir_name/${prefix}_${side}_outline.nii.gz
-echolor cyan "\n  Running: get_seeds.py $outline $dir_name $prefix $side"
+n_seeds=50
+echolor cyan "\n  Running: get_seeds.py $outline $dir_name $prefix $side $n_seeds"
 $script_dir/get_seeds.py $outline $dir_name $prefix $side
 
 # Create streamlines
