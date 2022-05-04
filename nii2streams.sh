@@ -78,7 +78,7 @@ done
 #input1=$dir_name/${prefix}_${side}_outline.nii.gz
 n_seeds=50
 echolor cyan "\n  Running: get_seeds.py $outline $dir_name $prefix $side $n_seeds"
-$script_dir/get_seeds.py $outline $dir_name $prefix $side
+$script_dir/get_seeds.py $outline $dir_name $prefix $side $n_seeds
 
 # Create streamlines
 mkdir $dir_name/tck

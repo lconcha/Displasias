@@ -12,6 +12,8 @@ import nibabel as nib
 from sklearn.neighbors import NearestNeighbors
 import networkx as nx
 from scipy.interpolate import splprep, splev
+from builtins import breakpoint
+
 
 def sort_points(seeds):
     """
@@ -98,7 +100,7 @@ if __name__ == "__main__":
     except IndexError:
         n_seeds = 150
     print(f'\n  Using {n_seeds} seeds')
-
+    
     #subject = basename(f_name).split('_')[0]
     #side = basename(f_name).split('_')[1]
     #side = basename(basename(f_name).split('_')[1]).split('.')[0]
