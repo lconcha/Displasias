@@ -1,6 +1,6 @@
 #!/bin/bash
 source `which my_do_cmd`
-fakeflag="-fake"
+fakeflag=""
 
 imagesdir=/misc/nyquist/lconcha/displasia
 for grp in CTRL BCNU
