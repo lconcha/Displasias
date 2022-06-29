@@ -70,11 +70,13 @@ then
     seq 1 $n > $f_linenums
     f_linelengths=${f%.tck}_linelengths.txt
     tckstats -quiet -force -dump $f_linelengths $f
-    streamlines="${streamlines} -tractography.load $f -tractography.tsf_load $f_linenums -tractography.tsf_load $f_linelengths"
+    streamlines="${streamlines} -tractography.load $f -tractography.tsf_load $f_linenums"
   done
-  for f in ${outfolder}/??/tck/*_resampled_imagespace.tck
+  for f in ${outfolder}/??/tck/*seeds*_resampled_imagespace.tck
   do
-    streamlines="${streamlines} -tractography.load $f -tractography.geometry points"
+    streamlines="${streamlines} -tractography.load $f \
+                -tractography.geometry points"
+                #-tractography.tsf_load $f_linenums"
   done
 fi
 
