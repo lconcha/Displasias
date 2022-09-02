@@ -1,5 +1,6 @@
 % 29 ago 2022
 % lconcha
+addpath /misc/mansfield/lconcha/software/Displasias
 addpath /home/inb/lconcha/fmrilab_software/tools/matlab/toolboxes/cbrewer/cbrewer
 addpath /home/inb/lconcha/fmrilab_software/tools/matlab/
 
@@ -15,10 +16,13 @@ metrics_table = readtable(f_ranges);
 metrics = metrics_table.fileName;
 
 
+
+
 doPlots = true;
 doStats = true;
-nperms  = 1000;
-doPerms = false;
+nperms     = 1000;
+ndiffperms = 1000;
+doPerms = true;
 
 %% Find files and figure out who to exclude
 for r = 1:length(rat_table.rat_id)
@@ -72,9 +76,9 @@ n2 = ceil(nMetrics) / n1;
 if doPlots
     % prepare colormaps
     cmap_div  = uint8(cbrewer('div','PuOr',128, 'spline') .* 255);
-    cmap_warm = uint8(cbrewer('seq','YlOrBr',128,'spline') .* 255);
-    cmap_cool = uint8(cbrewer('seq','PuBuGn',128,'spline') .* 255);
-    cmap_pval = hot(128);
+    cmap_warm = uint8(cbrewer('seq','YlOrBr',128,'spline') .* 255); 
+    cmap_cool = uint8(cbrewer('seq','PuBuGn',128,'spline') .* 255); cmap_cool = flip(cmap_cool,1);
+    cmap_pval = hot(128); cmap_pval = flip(cmap_pval,1);
     fig_all  = figure('units','normalized','outerposition',[0 0 1 1]);
     fig_ctrl = figure('units','normalized','outerposition',[0 0 1 1]);
     fig_bcnu = figure('units','normalized','outerposition',[0 0 1 1]);
@@ -219,12 +223,15 @@ end
 
 if doStats && doPlots
     figure('units','normalized','outerposition',[0 0 1 1]);
+    thismetric = metrics_table.shortName(m);
+    %RESULTS.
     for m = 1 : nMetrics
         data_ctrl = DATA(:,:,idx_ctrl,m);
         data_bcnu = DATA(:,:,idx_bcnu,m);
         thistitle = cell2mat(metrics_table.shortName(m));
         thisfname = ['clusterstats_' thistitle '.png'];
         clusters = displasia_cluster_param(data_ctrl,data_bcnu,0.05,0.05,5000,4,true,thistitle);
+        %RESULTS.(thistitle) = clusters;
         saveas(gcf,thisfname);
     end
 end
