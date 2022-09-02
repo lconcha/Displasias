@@ -94,9 +94,9 @@ end
 
 if doPlot
     cmap_div  = uint8(cbrewer('div','PuOr',128, 'spline') .* 255);
-    cmap_warm = uint8(cbrewer('seq','YlOrBr',128,'spline') .* 255);
-    cmap_cool = uint8(cbrewer('seq','PuBuGn',128,'spline') .* 255);
-    cmap_pval = hot(128);
+    cmap_warm = uint8(cbrewer('seq','YlOrBr',128,'spline') .* 255); 
+    cmap_cool = uint8(cbrewer('seq','PuBuGn',128,'spline') .* 255); cmap_cool = flip(cmap_cool,1);
+    cmap_pval = hot(128); cmap_pval = flip(cmap_pval,1);
     cmap_flag = prism(50); cmap_flag(1,:) = [1 1 1];
 
     subplot(2,3,1)
