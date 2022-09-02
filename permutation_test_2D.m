@@ -58,19 +58,28 @@ pvals.pAltB      = pAltB;
 pvals.pAdiffB    = pAdiffB;
 pvals.Student    = p;
 pvals.ndiffperms = ndiffperms;
+pvals.diff       = truediff;
 
 
 CC = bwconncomp(pAgtB < clusterformingpthreshold,conn);
 pvals.clustersizes.AgtB = cellfun(@numel,CC.PixelIdxList);
+L = labelmatrix(CC);
+pvals.clusterlabels.AgtB = L;
 
 CC = bwconncomp(pAltB < clusterformingpthreshold,conn);
 pvals.clustersizes.AltB = cellfun(@numel,CC.PixelIdxList);
+L = labelmatrix(CC);
+pvals.clusterlabels.AltB = L;
 
 CC = bwconncomp(pAdiffB < clusterformingpthreshold,conn);
 pvals.clustersizes.AdiffB = cellfun(@numel,CC.PixelIdxList);
+L = labelmatrix(CC);
+pvals.clusterlabels.AdiffB = L;
 
 CC = bwconncomp(p < clusterformingpthreshold,conn);
 pvals.clustersizes.Student = cellfun(@numel,CC.PixelIdxList);
+L = labelmatrix(CC);
+pvals.clusterlabels.Student = L;
 
 
 if doPlot
