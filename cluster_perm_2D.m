@@ -3,6 +3,7 @@ function pcluster = cluster_perm_2D(groupA,groupB,...
                     clusterformingpthreshold,...
                     clusterpthreshold,...
                     conn,...
+                    metricName,...
                     doPlot)
 
 
@@ -25,6 +26,11 @@ function labels_pval = paintclusterpval(clabels,cpvals)
 
 end
 
+groupA_name = groupA.name;
+groupB_name = groupB.name;
+
+groupA = groupA.data;
+groupB = groupB.data;
 
 nr  = size(groupA,1);
 nc  = size(groupA,2);
@@ -78,11 +84,11 @@ if doPlot
     cmap_pval = hot(128); cmap_pval = flip(cmap_pval,1);
     cmap_flag = prism(50); cmap_flag(1,:) = [1 1 1];
 
-    figure;
+    figure('units','normalized','outerposition',[0 0 1 1]);
     cmin = min([groupA(:);groupB(:)]);
     cmax = max([groupA(:);groupB(:)]);
-    subplot(3,3,1);imagesc(mean(groupA,3)');set(gca,'Clim',[cmin cmax]);colorbar;title('A'); set(gca,'colormap',cmap_cool);
-    subplot(3,3,2);imagesc(mean(groupB,3)');set(gca,'Clim',[cmin cmax]);colorbar;title('B'); set(gca,'colormap',cmap_cool);
+    subplot(3,3,1);imagesc(mean(groupA,3)');set(gca,'Clim',[cmin cmax]);colorbar;title(['A:' groupA_name ', ' metricName]); set(gca,'colormap',cmap_cool);
+    subplot(3,3,2);imagesc(mean(groupB,3)');set(gca,'Clim',[cmin cmax]);colorbar;title(['B:' groupB_name ', ' metricName]); set(gca,'colormap',cmap_cool);
     subplot(3,3,3);imagesc(pcluster.diff')';colorbar;title('A-B'); set(gca,'colormap',cmap_div);
     lims = get(gca,'Clim');
         newlims = [-abs(max(lims)) max(lims)];
