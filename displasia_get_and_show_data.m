@@ -5,7 +5,7 @@
 
 displasia_get_data
 displasia_plot_data
-displasia_simple_permutations.m
+displasia_cluster_permutations
 
 
 
