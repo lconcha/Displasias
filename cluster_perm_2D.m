@@ -77,6 +77,9 @@ pcluster.cluster_pvals_2D.AltB    = paintclusterpval(pcluster.clusterlabels.AltB
 pcluster.cluster_pvals_2D.AdiffB  = paintclusterpval(pcluster.clusterlabels.AdiffB, pcluster.cluster_pvals.AdiffB);
 pcluster.cluster_pvals_2D.Student = paintclusterpval(pcluster.clusterlabels.Student,pcluster.cluster_pvals.Student);
 
+pcluster.dcohen  = dcohen2D(groupA,groupB);
+
+
 if doPlot
     cmap_div  = uint8(cbrewer('div','PuOr',128, 'spline') .* 255);
     cmap_warm = uint8(cbrewer('seq','YlOrBr',128,'spline') .* 255); 
