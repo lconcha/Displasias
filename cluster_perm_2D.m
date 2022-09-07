@@ -47,9 +47,11 @@ pAdiffB = zeros(nr,nc,nclusperms);
 
 randclustersizes = [];
 
-fprintf(1,'Building empirical distribution of cluster sizes that occur by chance alone with %d permutations\n',nclusperms)
+fprintf(1,'  Building empirical distribution of cluster sizes that occur by chance alone with %d permutations\n',nclusperms)
+textprogressbar('    Progress : ');
 for perm = 1 : nclusperms
-    if mod(perm,10) == 0; fprintf(1,'%d ',round(100*(perm/nclusperms)));end
+    %if mod(perm,10) == 0; fprintf(1,'%d ',round(100*(perm/nclusperms)));end
+    if mod(perm,50) == 0; textprogressbar(100.*(perm./nclusperms)); end
     permutation = randperm(size(groupAB,3));
     idx1 = permutation(1:ngA);
     idx2 = permutation(ngA+1:end);
@@ -63,7 +65,8 @@ for perm = 1 : nclusperms
     randclustersizes   = [randclustersizes    pvals.clustersizes.AgtB];
     
 end
-fprintf(1,'\nFinished building distribution.\n')
+textprogressbar(' done.');
+%fprintf(1,'\nFinished building distribution.\n')
 
 pcluster = permutation_test_2D(groupA,groupB,ndiffperms,clusterformingpthreshold,conn,false);
 

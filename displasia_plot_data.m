@@ -59,8 +59,8 @@ for m = 1 : nMetrics
 
 end
 
-saveas(fig_all, 'metrics_all.svg');
-saveas(fig_ctrl,'metrics_ctrl.svg');
-saveas(fig_bcnu,'metrics_bcnu.svg');
-saveas(fig_diff,'metrics_diff.svg');
+saveas(fig_all, 'results/metrics_all.svg');
+saveas(fig_ctrl,'results/metrics_ctrl.svg');
+saveas(fig_bcnu,'results/metrics_bcnu.svg');
+saveas(fig_diff,'results/metrics_diff.svg');
 

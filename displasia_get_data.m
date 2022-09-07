@@ -63,6 +63,7 @@ for r = 1:length(rat_table.rat_id)
         dd       = load(f_data);
         thisdata = dd(1:3:end,1:2:end); % skip streamlines and points
         DATA(:,:,r,v) = thisdata;
+        allFileNames{r,v} = f_data;
     end
 end
 
