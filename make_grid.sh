@@ -63,7 +63,7 @@ then
 	#mrcalc  $a $b -add $c -add $d -add ${out_folder}/${rat_id}_${side}_${gridsufix}.nii.gz
 	mrcalc  $a $b -add $c -add $d -add $out_folder/${grid_name}_${gridsufix}.nii
 
-	gio trash ${out_folder}/base*.nii
+	rm -f ${out_folder}/base*.nii
 
 	#nii2mnc ${out_folder}/${rat_id}_${side}_${gridsufix}.nii.gz ${out_folder}/${rat_id}_${side}_${gridsufix}.mnc
 	nii2mnc $out_folder/${grid_name}_${gridsufix}.nii $out_folder/${grid_name}_${gridsufix}.mnc

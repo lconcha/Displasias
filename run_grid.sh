@@ -60,4 +60,4 @@ done
 mrcat ${outputname}_GradX.nii ${outputname}_GradY.nii ${outputname}_GradZ.nii ${outputname}_RGB.nii.gz
 
 gzip ${outputname}_GradX.nii; gzip ${outputname}_GradY.nii; gzip ${outputname}_GradZ.nii
-gio trash ${outputname}_Grad*.mnc
+rm -f ${outputname}_Grad*.mnc
