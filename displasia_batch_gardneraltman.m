@@ -33,13 +33,21 @@ for m = 1 : length(metrics)
         clusterpvals2D = RESULTS.clusterstats.(metric).cluster_pvals_2D.(comparison);
         pcomparison = ['p' comparison];
         pvals          = RESULTS.clusterstats.(metric).(pcomparison);
+        cohenvals      = RESULTS.clusterstats.(metric).dcohen;
         
         lemincluster = min(min(clusterpvals2D));
         mostSigCluster = double(clusterpvals2D == lemincluster);
         mostSigCluster(mostSigCluster==0) = NaN;
+        
         leminp = min(min(mostSigCluster .* pvals));
         idx = find (pvals.*mostSigCluster == leminp);
         [str,depth] = ind2sub(size(pvals),idx);
+
+%         lemaxcohen = max(max(mostSigCluster .* cohenvals));
+%         idx = find (cohenvals.*mostSigCluster == lemaxcohen);
+%         [str,depth] = ind2sub(size(cohenvals),idx);
+
+
         str = str(1); % take the first one only
         depth = depth(1); % take the first one only
     
