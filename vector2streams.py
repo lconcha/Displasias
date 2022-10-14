@@ -12,6 +12,8 @@ import nibabel as nib
 from dipy.io.image import load_nifti
 import matplotlib.pyplot as plt
 import pdb
+from termcolor import colored
+
 
 def get_tck_list(segments):
     """
@@ -64,7 +66,7 @@ def vectorfield2streams_2d(x, y, gX, gY, seeds, slice_n, side= 'l',
         else:
             print(f'  Streamline {i} is empty. seed: {seed}')
             print(f'    shape:  {np.shape(lines)}')
-            print(f'    Will create a zero-length streamline')
+            print(colored('    Will create a zero-length streamline', 'red'))
             lines = np.zeros((1,2,2)) # a streamline with zero-length
             print(f'    shape:  {np.shape(lines)}')
             streams.append(lines[0])
