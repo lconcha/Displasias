@@ -144,11 +144,11 @@ saveas(h_fig,f_png);
 
 figure;
 %%%%%%% OPTIONS %%%%%%%%%%%%%%%
-clusterformingpthreshold = 0.05;
-clusterpthreshold        = 0.05;
-ndiffperms               = 5000;
-nclusperms               = 5000;
-conn                     = 4;
+clusterformingpthreshold = RESULTS.parameters.clusterformingpthreshold;
+clusterpthreshold        = RESULTS.parameters.clusterpthreshold;
+ndiffperms               = RESULTS.parameters.ndiffperms;
+nclusperms               = RESULTS.parameters.nclusperms;
+conn                     = RESULTS.parameters.conn;
 doPlot                   = true;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 data_ctrl.data = MAHAL(:,:,RESULTS.data.idx_ctrl);

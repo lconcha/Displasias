@@ -68,4 +68,4 @@ for r = 1:length(rat_table.rat_id)
 end
 
 n1 = ceil(sqrt(nMetrics));
-n2 = ceil(nMetrics) / n1;
+n2 = ceil(nMetrics / n1);

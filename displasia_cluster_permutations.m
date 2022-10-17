@@ -6,6 +6,7 @@ ndiffperms               = 5000;
 nclusperms               = 5000;
 conn                     = 4;
 doPlot                   = true;
+rng(1);                  % seed. Note: added this line only AFTER the first 20 metrics (and mahal) were analyzed, so it is pointless. My bad.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -16,7 +17,7 @@ idx_bcnu = rat_table.group == "BCNU";
 
 figure('units','normalized','outerposition',[0 0 1 1]);
 tic
-for m = 1 : nMetrics
+for m = 21% : nMetrics
     data_ctrl.data = DATA(:,:,idx_ctrl,m);
     data_ctrl.name = 'ctrl';
     data_bcnu.data = DATA(:,:,idx_bcnu,m);
