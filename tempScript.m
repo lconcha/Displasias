@@ -32,8 +32,9 @@ idx_ctrl = RESULTS.data.idx_ctrl;
 idx_bcnu = RESULTS.data.idx_bcnu;
 
 takeTheseMetrics = zeros(21,1);
-takeTheseMetrics([2 10 11 12 13 14]) = 1;
+takeTheseMetrics([2 10]) = 1;
 takeTheseMetrics = logical(takeTheseMetrics);
+nMetricsTaken    = sum(takeTheseMetrics(:));
 
 values_ctrl = squeeze(RESULTS.data.DATA(s,d,idx_ctrl,takeTheseMetrics));
 values_bcnu = squeeze(RESULTS.data.DATA(s,d,idx_bcnu,takeTheseMetrics));
@@ -42,10 +43,11 @@ values_all  = squeeze(RESULTS.data.DATA(s,d,:,takeTheseMetrics));
 
 d_ctrl = values_ctrl ./ mean(values_all);
 d_bcnu = values_bcnu ./ mean(values_all);
-m = mahal(d_bcnu,d_ctrl);
+m_b = mahal(d_bcnu,d_ctrl);
+m_c = mahal(d_ctrl,d_ctrl);
 
-scatter(d_ctrl(:,1), d_ctrl(:,2), 50, 'filled','MarkerFaceColor','k'); hold on
-scatter(d_bcnu(:,1), d_bcnu(:,2), 50, m , 'filled')
+scatter(d_ctrl(:,1), d_ctrl(:,2), 50, m_c, 'Marker','x'); hold on
+scatter(d_bcnu(:,1), d_bcnu(:,2), 50, m_b , 'filled')
 
 
 
@@ -59,8 +61,10 @@ for s = 1 : nStreamlines
        im(s,d) = 1;
        imd = imdilate(logical(im),SE);
        [i,j] = ind2sub(size(imd),find(imd));
-       %I = zeros(1,nStreamlines); I(i) = 1; I = logical(I);
-       %J = zeros(1,nDepths);      J(j) = 1; J = logical(J);
+       
+       npix = sum(imd(:));
+       values_ctrl = zeros()
+
        values_ctrl = squeeze(RESULTS.data.DATA(i,j,idx_ctrl,takeTheseMetrics)); % esto está mal, quiero la coincidencia i,j
        values_bcnu = squeeze(RESULTS.data.DATA(i,j,idx_bcnu,takeTheseMetrics));
        values_all  = squeeze(RESULTS.data.DATA(i,j,:,takeTheseMetrics));
