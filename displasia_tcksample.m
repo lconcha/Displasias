@@ -23,13 +23,13 @@ info = niftiinfo(f_values_in);
 if ndims(V) > 3
     fprintf(1,'ERROR. %s has 4 dimensions. This script can only handle 3D. Bye.\n',f_values_in);
     VALUES = [];
-    return;
+    
 end
 
 %% displasia-specific problem related to brkraw. Need to permute axes.
 if size(V,2) > size(V,3)
   fprintf(1,'Woah, it seems like slices are in the third dimension. For displasia project they should be on the second dimension.\n');
-  fprintf(1,'  ... will convert the file to have correct strides for you.\n')
+  fprintf(1,'  ... will convert the file to have correct strides for you outside of matlab.\n')
   tmpvaluesfile = '/tmp/tmpvaluesfile.nii.gz';
   systemcommand = ['mrconvert -strides 1,2,3 ' f_values_in ' ' tmpvaluesfile];
   fprintf(1,'  executing: %s\n',systemcommand);
