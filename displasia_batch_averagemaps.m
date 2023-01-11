@@ -137,8 +137,16 @@ for m = 1 : length(metrics)
         data_ctrl = RESULTS.data.DATA(:,:,RESULTS.data.idx_ctrl,m);
         data_bcnu = RESULTS.data.DATA(:,:,RESULTS.data.idx_bcnu,m);
         mybcnucolor = cmap_cool(length(cmap_cool)./2,:);
-        histogram(data_ctrl, 'Normalization','probability','DisplayStyle', 'stairs', 'EdgeColor',mygray,'LineWidth',2); hold on
-        histogram(data_bcnu, 'Normalization','probability','DisplayStyle', 'stairs', 'EdgeColor',mybcnucolor,'LineWidth',2); hold off
+        nbins = 25;
+        %[n,e] = histcounts(thisdata(:),nbins); % get edges from control and use them for both groups
+        %[n,x] = histcounts(data_ctrl(:),e);  plot(x(2:end),n,'Color',mygray,     'LineWidth',2); hold on;
+        %[n,x] = histcounts(data_bcnu(:),e);  plot(x(2:end),n,'Color',mybcnucolor,'LineWidth',2); hold off;
+        xmin = prctile(thisdata(:),1); xmax = prctile(thisdata(:),99);
+        hall = histogram(thisdata,'BinLimits',[xmin xmax], 'Normalization','probability'); hold on;
+        e = hall.BinEdges;
+        cla;
+        histogram(data_ctrl, e,  'Normalization','probability','DisplayStyle', 'stairs', 'EdgeColor',mygray,'LineWidth',2); hold on
+        histogram(data_bcnu, e,  'Normalization','probability','DisplayStyle', 'stairs', 'EdgeColor',mybcnucolor,'LineWidth',2); hold off
         title([metric],'Color','w')
         set(gca,'Color','k','XColor','w', 'YColor','w','box', 'off')
         legend('Control','BCNU','TextColor','w')

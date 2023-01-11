@@ -20,6 +20,7 @@ switch hname
         f_ranges  = '/datos/syphon/displasia/paraArticulo1/ranges.csv';
         addpath /home/lconcha/software/cbrewer
         f_results = '/datos/syphon/displasia/paraArticulo1/RESULTS.mat';
+        addpath /home/lconcha/software/Displasias/
 end
 
 
@@ -30,6 +31,7 @@ free_clim           = false;
 pclus_threshold     = 0.05;
 puncorr_threshold   = 0.05;
 
+h_fig = figure('units','normalized','outerposition',[0 0 0.5 0.5]);
 
 metrics = fieldnames(RESULTS.clusterstats);
 comparisons = {'AgtB','AltB'};
@@ -41,16 +43,24 @@ for m = 1 : length(metrics)
       fprintf(1,'%d %d %s %s\n',m,c,metric,comparison);
 
 
-      h_fig = figure('units','normalized','outerposition',[0 0 0.25 0.5]);
+      
       displasia_plot_streamlines(f_tck,RESULTS,metric,comparison,msize,free_clim,pclus_threshold,puncorr_threshold)
+      drawnow;
+
       f_svg = fullfile(figuresfolder,'svg',[metric '_' comparison '.svg']);
       f_png = fullfile(figuresfolder,'png',[metric '_' comparison '.png']);
       set(h_fig, 'InvertHardcopy', 'off');
       saveas(h_fig,f_svg);
       saveas(h_fig,f_png);
-      close(h_fig);
+      clf;
     end
 end
 
-
-
+h = displasia_show_streamlines_with_values(f_tck, mean(MAHAL(:,:,idx_bcnu),3)  ,[], 'Mahal');
+set(gca,'Clim',[0 50]);
+f_svg = fullfile(figuresfolder,'svg',['mahalanobis.svg']);
+f_png = fullfile(figuresfolder,'png',['mahalanobis.png']);
+set(h_fig, 'InvertHardcopy', 'off');
+saveas(h_fig,f_svg);
+saveas(h_fig,f_png);
+clf;

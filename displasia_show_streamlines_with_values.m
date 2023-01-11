@@ -3,6 +3,12 @@ function h = displasia_show_streamlines_with_values(f_tck,values,clim, thetitle)
 
 fprintf(1,'Using tck: %s\n',f_tck);
 
+
+if isempty(values)
+  values = ones()
+end
+
+
 if ndims(values) ~= 2
   error('values should have two dimensions')
   h = 0;
@@ -27,7 +33,7 @@ cmap_pval = hot(128); cmap_pval = flip(cmap_pval,1);
 
 
 
-h = figure('units','normalized','outerposition',[0 0 0.5 0.5]);
+%h = figure('units','normalized','outerposition',[0 0 0.5 0.5]);
 
 
 for st = 1 : length(tck.data)
@@ -47,3 +53,5 @@ hold off;
 set(gcf,'Color','k')
 h_colorbar = colorbar(gca,'Color',mygray);
 title(thetitle,'Color','w')
+
+h = gcf;
