@@ -52,11 +52,13 @@ for s = 1 : length(tck.data)
        xyz = this_streamline(p,:);
        vox_indices = [xyz 1]  * inv(info.Transform.T);
        vox_indices = vox_indices(1:3);
+       mindices    = vox_indices + 1;
        matlab_indices = uint8(vox_indices + 1);
-       val = V(matlab_indices(1),matlab_indices(2),matlab_indices(3));
-       %fprintf(1,'Streamline %d, point %d, xyz(%1.2f,%1.2f,%1.2f), ncomp : %d\n',s,p, xyz(1), xyz(2), xyz(3), val);
+       %val = V(matlab_indices(1),matlab_indices(2),matlab_indices(3)); % one way to sample
+       ival =  interp3(V,mindices(2), mindices(1), mindices(3)); %       another way to sample. Check x-y permutation in mindices
+       fprintf(1,'Streamline %d, point %d, xyz(%1.2f,%1.2f,%1.2f), val : %1.2g, ival: %1.2g\n',s,p, xyz(1), xyz(2), xyz(3), val,ival);
        fprintf(fid,'%1.3f ',val);
-       this_data(p,1) = val;
+       this_data(p,1) = ival;
    end
    fprintf(fid,'\n');
    tsf.data{s} = this_data;
