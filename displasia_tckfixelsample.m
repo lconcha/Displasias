@@ -1,5 +1,5 @@
 function VALUES = displasia_tckfixelsample(f_tck, f_PDD, f_nComp, f_values_in, ...
-                                           f_txt_out,f_tsf_par_out, f_tsf_perp_out, f_tsf_par_index_out)
+                                           f_tsf_par_out, f_tsf_perp_out, f_tsf_par_index_out)
 % VALUES = displasia_tcksample(tck,f_values_in,f_txt_out)
 
 % addpath('/home/lconcha/software/mrtrix_matlab/matlab');
@@ -94,7 +94,6 @@ nFixels = 3; % forcing 3 pixels
 tsf_par  = tck;
 tsf_perp = tck;
 tsf_index_par = tck;
-fid = fopen(f_txt_out,'w');
 
 
 %% Do the sampling
@@ -178,7 +177,6 @@ for s = 1 : length(tck.data)
        this_data_perp(p,1) = val_perp;
        this_index_par(p,1) = indexpar;
    end
-   fprintf(fid,'\n');
    tsf_par.data{s}  = this_data_par;
    tsf_perp.data{s} = this_data_perp;
    try
@@ -196,5 +194,4 @@ fprintf(1,'Writing tsf_perp: %s\n',f_tsf_perp_out);
 write_mrtrix_tsf(tsf_perp,f_tsf_perp_out)
 fprintf(1,'Writing tsf_index_par: %s\n',f_tsf_par_index_out);
 write_mrtrix_tsf(tsf_index_par,f_tsf_par_index_out)
-fclose(fid);
 VALUES = tsf_par.data;
