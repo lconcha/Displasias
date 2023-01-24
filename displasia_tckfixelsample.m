@@ -19,14 +19,6 @@ tck = read_mrtrix_tracks(f_tck);
 
 
 %% Load voxel data
-fprintf('Loading %s\n',f_values_in);
-V    = niftiread(f_values_in);
-info = niftiinfo(f_values_in);
-if ndims(V) ~= 4
-    fprintf(1,'ERROR. %s does not have 4 dimensions. This script can only handle 4D. Bye.\n',f_values_in);
-    VALUES = [];
-    return
-end
 
 fprintf('Loading %s\n',f_PDD);
 PDD    = niftiread(f_PDD);
@@ -49,25 +41,13 @@ end
 
 
 %% displasia-specific problem related to brkraw. Need to permute axes.
-if size(V,2) > size(V,3)
-  fprintf(1,'Woah, it seems like slices in the volume to sample from are in the third dimension. For displasia project they should be on the second dimension.\n');
-  fprintf(1,'  ... will convert the file to have correct strides for you outside of matlab.\n')
-  tmpvaluesfile = '/tmp/tmpvaluesfile.nii.gz';
-  systemcommand = ['mrconvert -strides 1,2,3,4 ' f_values_in ' ' tmpvaluesfile];
-  fprintf(1,'  executing: %s\n',systemcommand);
-  [status,result] = system(systemcommand);
-  fprintf('Loading %s\n',tmpvaluesfile);
-  V = niftiread(tmpvaluesfile);
-  info = niftiinfo(tmpvaluesfile);
-  [status,result] = system(['rm -f ' tmpvaluesfile]);
-end
 if size(PDD,2) > size(PDD,3)
   fprintf(1,'Woah, it seems like slices in the PDD file are in the third dimension. For displasia project they should be on the second dimension.\n');
   fprintf(1,'  ... will convert the file to have correct strides for you outside of matlab.\n')
   tmpPDD = '/tmp/PDD.nii.gz';
   systemcommand = ['mrconvert -strides 1,2,3,4 ' f_PDD ' ' tmpPDD];
   fprintf(1,'  executing: %s\n',systemcommand);
-  [status,result] = system(systemcommand);
+  [status,result] = system(systemcommand)
   fprintf('Loading %s\n',tmpPDD);
   PDD = niftiread(tmpPDD);
   infoPDD = niftiinfo(tmpPDD);
@@ -94,15 +74,17 @@ nFixels = 3; % forcing 3 pixels
 tsf_par  = tck;
 tsf_perp = tck;
 tsf_index_par = tck;
+tsf_ncomp     = tck;
 
 
-%% Do the sampling
+%% Identify parallel/perpendicular
+fprintf(1,'Identifying par/perp... ')
 for s = 1 : length(tck.data)
    fprintf (1,'%d ',s);
-   this_streamline = tck.data{s};
-   this_data_par        = zeros(size(this_streamline,1),1);
-   this_data_perp       = zeros(size(this_streamline,1),1);
+   this_streamline      = tck.data{s};
    this_index_par       = zeros(size(this_streamline,1),1);
+   this_index_perp      = zeros(size(this_streamline,1),1);
+   this_nComp           = zeros(size(this_streamline,1),1);
    for p = 1 : size(this_streamline,1);
        Axyz = this_streamline(p,:);
        if p == size(this_streamline,1)
@@ -152,10 +134,66 @@ for s = 1 : length(tck.data)
 
        thisnComp = interp3(nComp,mindices(2), mindices(1), mindices(3), 'nearest');
 
-       if s == 16 && p == 2
-             fprintf(1,'hey\n');
-       end
 
+
+       this_index_par(p,1)  = indexpar;
+       this_index_perp(p,1) = indexperp;
+       this_nComp(p,1)      = thisnComp;
+   end
+   try
+    tsf_index_par.data{s}  = this_index_par;
+    tsf_index_perp.data{s} = this_index_perp;
+    tsf_ncomp.data{s}      = this_nComp;
+   catch
+    fprintf(1,'Hey!')
+   end
+end
+fprintf (1,'\nFinished identifying par/perp\n',s);
+
+
+%% Do the sampling
+
+fprintf('Loading %s\n',f_values_in);
+V    = niftiread(f_values_in);
+info = niftiinfo(f_values_in);
+if ndims(V) ~= 4
+    fprintf(1,'ERROR. %s does not have 4 dimensions. This script can only handle 4D. Bye.\n',f_values_in);
+    VALUES = [];
+    return
+end
+if size(V,2) > size(V,3)
+  fprintf(1,'Woah, it seems like slices in the volume to sample from are in the third dimension. For displasia project they should be on the second dimension.\n');
+  fprintf(1,'  ... will convert the file to have correct strides for you outside of matlab.\n')
+  tmpvaluesfile = '/tmp/tmpvaluesfile.nii.gz';
+  systemcommand = ['mrconvert -strides 1,2,3,4 ' f_values_in ' ' tmpvaluesfile];
+  fprintf(1,'  executing: %s\n',systemcommand);
+  [status,result] = system(systemcommand);
+  fprintf('Loading %s\n',tmpvaluesfile);
+  V = niftiread(tmpvaluesfile);
+  info = niftiinfo(tmpvaluesfile);
+  [status,result] = system(['rm -f ' tmpvaluesfile]);
+end
+
+for s = 1 : length(tck.data)
+   fprintf (1,'%d ',s);
+   this_streamline = tck.data{s};
+   this_data_par        = zeros(size(this_streamline,1),1);
+   this_data_perp       = zeros(size(this_streamline,1),1);
+   for p = 1 : size(this_streamline,1);
+       xyz = this_streamline(p,:);
+       
+       vox_indices = [xyz 1]  * inv(info.Transform.T);
+       vox_indices = vox_indices(1:3);
+       mindices    = vox_indices + 1;
+       matlab_indices = uint8(vox_indices + 1);
+
+     
+       %thisnComp = interp3(nComp,mindices(2), mindices(1), mindices(3), 'nearest');
+       thisnComp  = tsf_ncomp.data{s}(p);
+       indexpar   = tsf_index_par.data{s}(p);
+       indexperp  = tsf_index_perp.data{s}(p);
+
+       
        vals(1) = interp3(V(:,:,:,1),mindices(2), mindices(1), mindices(3));
        vals(2) = interp3(V(:,:,:,2),mindices(2), mindices(1), mindices(3));
        vals(3) = interp3(V(:,:,:,3),mindices(2), mindices(1), mindices(3));
@@ -174,8 +212,7 @@ for s = 1 : length(tck.data)
        val_perp = vals(indexperp);
 
        this_data_par(p,1)  = val_par;
-       this_data_perp(p,1) = val_perp;
-       this_index_par(p,1) = indexpar;
+       this_data_perp(p,1) = val_perp;       
    end
    tsf_par.data{s}  = this_data_par;
    tsf_perp.data{s} = this_data_perp;
@@ -194,4 +231,5 @@ fprintf(1,'Writing tsf_perp: %s\n',f_tsf_perp_out);
 write_mrtrix_tsf(tsf_perp,f_tsf_perp_out)
 fprintf(1,'Writing tsf_index_par: %s\n',f_tsf_par_index_out);
 write_mrtrix_tsf(tsf_index_par,f_tsf_par_index_out)
+fclose(fid);
 VALUES = tsf_par.data;
