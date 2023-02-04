@@ -32,13 +32,14 @@ function VALUES = displasia_tckfixelsample(f_tck, f_PDD, f_nComp, ff_values_in, 
 % lconcha@unam.mx
 
 
+%% Load tck
 fprintf('Loading %s\n',f_tck);
 tck = read_mrtrix_tracks(f_tck);
 
 
 
 
-%% Load voxel data
+%% Load voxel data for PDD and nComp
 
 fprintf('Loading %s\n',f_PDD);
 PDD    = niftiread(f_PDD);
@@ -48,7 +49,6 @@ if ndims(PDD) ~= 4
     VALUES = [];
     return
 end
-
 fprintf('Loading %s\n',f_nComp);
 nComp    = niftiread(f_nComp);
 info = niftiinfo(f_nComp);
@@ -150,11 +150,7 @@ for s = 1 : length(tck.data)
            indexperp          = 3;
        end
 
-
-
        thisnComp = interp3(nComp,mindices(2), mindices(1), mindices(3), 'nearest');
-
-
 
        this_index_par(p,1)  = indexpar;
        this_index_perp(p,1) = indexperp;
@@ -209,14 +205,12 @@ for i = 1 : length(ff_values_in)
            vox_indices = vox_indices(1:3);
            mindices    = vox_indices + 1;
            matlab_indices = uint8(vox_indices + 1);
-    
          
            %thisnComp = interp3(nComp,mindices(2), mindices(1), mindices(3), 'nearest');
            thisnComp  = tsf_ncomp.data{s}(p);
            indexpar   = tsf_index_par.data{s}(p);
            indexperp  = tsf_index_perp.data{s}(p);
     
-           
            vals(1) = interp3(V(:,:,:,1),mindices(2), mindices(1), mindices(3));
            vals(2) = interp3(V(:,:,:,2),mindices(2), mindices(1), mindices(3));
            vals(3) = interp3(V(:,:,:,3),mindices(2), mindices(1), mindices(3));
