@@ -7,6 +7,12 @@
 % L2 = ((3*MD) - L1) / 2
 % RD = (2 * L2) / 2 = L2;
 
+cd('/misc/mansfield/lconcha/exp/displasia/paraArticulo1/results')
+load RESULTS
+
+% check if you have already done this by taking a peek into :
+RESULTS.data.metrics
+% and if you see 'rd' then you can go do something else.
 
 % The indices for the needed metrics in RESULTS.data.DATA are as follows:
 index_AD = 1;  % ad.txt
@@ -21,5 +27,10 @@ RD = ((3*MD) - AD) ./ 2;
 nMetrics = size(RESULTS.data.DATA,4);
 index_RD = nMetrics + 1;
 RESULTS.data.DATA(:,:,:,index_RD) = RD;
-nMetrics = size(RESULTS.data.DATA,4);
 RESULTS.data.metrics{index_RD} = 'rd';
+
+% put the data outside the structure so we can use the next scripts
+DATA = RESULTS.data.DATA;
+rat_table = RESULTS.data.rat_table;
+nMetrics = size(RESULTS.data.DATA,4);
+
