@@ -109,8 +109,10 @@ for s = 1 : length(tck.data)
        Axyz = this_streamline(p,:);
        if p == size(this_streamline,1)
         Bxyz = this_streamline(p-1,:);
+        Rxyz = this_streamline(1,:);
        else
         Bxyz = this_streamline(p+1,:);
+        Rxyz = this_streamline(end,:);
        end
        
        normSegment = (Axyz-Bxyz) ./ norm(Axyz-Bxyz);
