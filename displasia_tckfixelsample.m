@@ -91,10 +91,13 @@ end
 %nFixels = size(PDD,4) ./ 3;
 nFixels = 3; % forcing 3 pixels
 
-tsf_par  = tck;
-tsf_perp = tck;
-tsf_index_par = tck;
-tsf_ncomp     = tck;
+tsf_par                         = tck;
+tsf_perp                        = tck;
+tsf_index_par                   = tck;
+tsf_ncomp                       = tck;
+tsf_dot_parallel2streamline     = tck;
+tsf_dot_perp2slicenormal        = tck;
+       
 
 
 %% Identify parallel/perpendicular
@@ -105,14 +108,25 @@ for s = 1 : length(tck.data)
    this_index_par       = zeros(size(this_streamline,1),1);
    this_index_perp      = zeros(size(this_streamline,1),1);
    this_nComp           = zeros(size(this_streamline,1),1);
+   this_dot_parallel2streamline = zeros(size(this_streamline,1),1);
+   this_dot_perp2slicenormal    = zeros(size(this_streamline,1),1);
+
+   Rxyz1 = this_streamline(1,:);
+   origin = [0 0 0];
+   Rxyz3 = this_streamline(end,:);
+
+   PLANE = createPlane(normalizeVector3d(Rxyz1), origin ,normalizeVector3d(Rxyz3)); % create a plane centered at origin
+   NORMAL = planeNormal(PLANE);
+
+
    for p = 1 : size(this_streamline,1);
        Axyz = this_streamline(p,:);
        if p == size(this_streamline,1)
         Bxyz = this_streamline(p-1,:);
-        Rxyz = this_streamline(1,:);
+%         Rxyz = this_streamline(1,:);
        else
         Bxyz = this_streamline(p+1,:);
-        Rxyz = this_streamline(end,:);
+%         Rxyz = this_streamline(end,:);
        end
        
        normSegment = (Axyz-Bxyz) ./ norm(Axyz-Bxyz);
@@ -133,9 +147,14 @@ for s = 1 : length(tck.data)
        PDD3(2) =  interp3(PDD(:,:,:,8),mindices(2), mindices(1), mindices(3));
        PDD3(3) =  interp3(PDD(:,:,:,9),mindices(2), mindices(1), mindices(3));
 
-       dots(1) = dot(normSegment,PDD1./norm(PDD1));
-       dots(2) = dot(normSegment,PDD2./norm(PDD2));
-       dots(3) = dot(normSegment,PDD3./norm(PDD3));
+       normPDD1= PDD1./norm(PDD1);
+       normPDD2= PDD2./norm(PDD2);
+       normPDD3= PDD3./norm(PDD3);
+       normPDDs = [normPDD1;normPDD2;normPDD3];
+
+       dots(1) = dot(normSegment,normPDD1);
+       dots(2) = dot(normSegment,normPDD2);
+       dots(3) = dot(normSegment,normPDD3);
 
        thisnComp = interp3(nComp,mindices(2), mindices(1), mindices(3), 'nearest');
 
@@ -154,14 +173,27 @@ for s = 1 : length(tck.data)
 
        thisnComp = interp3(nComp,mindices(2), mindices(1), mindices(3), 'nearest');
 
+       
        this_index_par(p,1)  = indexpar;
        this_index_perp(p,1) = indexperp;
        this_nComp(p,1)      = thisnComp;
+
+       % calculate the absolute dot products between:
+       % Streamline to parallel tensor
+       this_dot_parallel2streamline(p,1)  = abs(dots(indexpar));
+       % Slice normal to perpendicular tensor
+       this_dot_perp2slicenormal(p,1)     = abs(dot(normPDDs(indexperp,:),NORMAL));
+
+       
+
+
    end
    try
-    tsf_index_par.data{s}  = this_index_par;
-    tsf_index_perp.data{s} = this_index_perp;
-    tsf_ncomp.data{s}      = this_nComp;
+    tsf_index_par.data{s}                 = this_index_par;
+    tsf_index_perp.data{s}                = this_index_perp;
+    tsf_ncomp.data{s}                     = this_nComp;
+    tsf_dot_parallel2streamline.data{s}   = this_dot_parallel2streamline;
+    tsf_dot_perp2slicenormal.data{s}      = this_dot_perp2slicenormal;
    catch
     fprintf(1,'Hey!')
    end
@@ -243,14 +275,20 @@ for i = 1 : length(ff_values_in)
     end
     fprintf (1,'\nFinished sampling %s\n',fname);
     
-    
+    %%%%% write tsf files
     f_tsf_par_out  = [f_prefix '_' varName '_par.tsf'];
     f_tsf_perp_out = [f_prefix '_' varName '_perp.tsf'];
+    f_tsf_dot_parallel2streamline = [f_prefix '_dot_parallel2streamline.tsf'];
+    f_tsf_dot_perp2slicenormal    = [f_prefix '_dot_perp2slicenormal.tsf'];
     fprintf(1,'  [INFO] Writing tsf_par: %s\n',f_tsf_par_out);
-    write_mrtrix_tsf(tsf_par,f_tsf_par_out)
+    write_mrtrix_tsf(tsf_par,f_tsf_par_out);
     fprintf(1,'  [INFO] Writing tsf_perp: %s\n',f_tsf_perp_out);
-    write_mrtrix_tsf(tsf_perp,f_tsf_perp_out)
-
+    write_mrtrix_tsf(tsf_perp,f_tsf_perp_out);
+    fprintf(1,'  [INFO] Writing tsf_dot_parallel2streamline: %s\n',f_tsf_dot_parallel2streamline);
+    write_mrtrix_tsf(tsf_dot_parallel2streamline,f_tsf_dot_parallel2streamline);
+    fprintf(1,'  [INFO] Writing tsf_dot_perp2slicenormal: %s\n',f_tsf_dot_perp2slicenormal);
+    write_mrtrix_tsf(tsf_dot_perp2slicenormal,f_tsf_dot_perp2slicenormal);
+ 
     VALUES.par.(varName)  = tsf_par.data;
     VALUES.perp.(varName) = tsf_perp.data;
 end

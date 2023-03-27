@@ -11,8 +11,13 @@ switch hname
         addpath /home/inb/lconcha/fmrilab_software/tools/matlab/toolboxes/cbrewer/cbrewer
         addpath(genpath('/home/inb/lconcha/fmrilab_software/tools/matlab/toolboxes/matGeom/'));
 
-        mrds_basename = '/misc/nyquist/lconcha/displasia/CTRL/64A/30/derivatives/dwi/regrid_dwi_MRDS_Diff_BIC';
-        f_tck         = '/misc/nyquist/lconcha/displasia/CTRL/64A/30/derivatives/dwi/14/tck/dwi_l_out_resampled_native.tck';
+%         mrds_basename = '/misc/nyquist/lconcha/displasia/CTRL/64A/30/derivatives/dwi/regrid_dwi_MRDS_Diff_BIC';
+%         f_tck         = '/misc/nyquist/lconcha/displasia/CTRL/64A/30/derivatives/dwi/14/tck/dwi_l_out_resampled_native.tck';
+        %f_tck         = '/misc/nyquist/lconcha/displasia/CTRL/64A/30/derivatives/dwi/14/tck/onestreamline.tck';
+
+        mrds_basename = '/misc/nyquist/dcortes_aylin/displaciasCorticales/preproc/37A/ses-P30/dwi/MRDS/regrid_37A_mrds_MRDS_Diff_BIC';
+        f_tck         = '/misc/nyquist/dcortes_aylin/displaciasCorticales/derivatives/37A/ses-P30/minc/tck/37A_l_14_out_resampled_10.tck';
+
         f_PDD         = [mrds_basename, '_PDDs_CARTESIAN.nii.gz'];
         f_nComp       = [mrds_basename, '_NUM_COMP.nii.gz'];
         ff_values_in  = {[mrds_basename, '_FA.nii.gz']};
