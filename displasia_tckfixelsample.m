@@ -34,9 +34,10 @@ function VALUES = displasia_tckfixelsample(f_tck, f_PDD, f_nComp, ff_values_in, 
 
 %% Load tck
 tck_world = read_mrtrix_tracks(f_tck);
-tmptck =  '/tmp/tmp.tck'
-fprintf(1, '[INFO]  Converting tck to voxel coordinates.')
+tmptck =  '/tmp/tmp.tck';
+fprintf(1, '[INFO]  Converting tck to voxel coordinates.\n')
 systemcommand = ['tckconvert -scanner2voxel ' f_nComp ' ' f_tck ' ' tmptck ' -force -quiet'];
+fprintf(1,'  executing: %s\n',systemcommand);
 fprintf('Loading %s\n',f_tck);
 [status,result] = system(systemcommand);
 tck = read_mrtrix_tracks(tmptck);
@@ -66,40 +67,15 @@ end
 
 
 %% displasia-specific problem related to brkraw. Need to permute axes.
-% volume_is_permuted = false;
-% if size(PDD,2) > size(PDD,3)
-%   fprintf(1,'Woah, it seems like slices in the PDD file are in the third dimension. For displasia project they should be on the second dimension.\n');
-%   fprintf(1,'  ... will convert the file to have correct strides for you outside of matlab.\n')
-%   tmpPDD = '/tmp/PDD.nii.gz';
-%   systemcommand = ['mrconvert -axes 0,2,1,3 -strides 1,2,3,4 -quiet -force ' f_PDD ' ' tmpPDD];
-%   fprintf(1,'  executing: %s\n',systemcommand);
-%   [status,result] = system(systemcommand);
-%   fprintf('Loading %s\n',tmpPDD);
-%   PDD = niftiread(tmpPDD);
-%   info = niftiinfo(tmpPDD);
-%   Tcopy  = info.Transform.T;
-% %   info.Transform.T(4,2) = Tcopy(4,3); 
-% %   info.Transform.T(4,3) = Tcopy(4,2);
-%   [status,result] = system(['rm -f ' tmpPDD]);
-%   volume_is_permuted = true;
-% end
-% if size(nComp,2) > size(nComp,3)
-%   fprintf(1,'Woah, it seems like slices in the nComp file are in the third dimension. For displasia project they should be on the second dimension.\n');
-%   fprintf(1,'  ... will convert the file to have correct strides for you outside of matlab.\n')
-%   tmpnComp = '/tmp/nComp.nii.gz';
-%   systemcommand = ['mrconvert -axes 0,2,1 -strides 1,2,3 -quiet -force ' f_nComp ' ' tmpnComp];
-%   fprintf(1,'  executing: %s\n',systemcommand);
-%   [status,result] = system(systemcommand);
-%   fprintf('Loading %s\n',tmpnComp);
-%   nComp = niftiread(tmpnComp);
-%   info = niftiinfo(tmpnComp);
-%   Tcopy  = info.Transform.T;
-% %   info.Transform.T(4,2) = Tcopy(4,3); 
-% %   info.Transform.T(4,3) = Tcopy(4,2);
-%   [status,result] = system(['rm -f ' tmpnComp]);
-%   volume_is_permuted = true;
-% 
-% end
+volume_is_permuted = false;
+if size(PDD,2) > size(PDD,3)
+  fprintf(1,'\n\n*****\nWoah, it seems like slices in the PDD file are in the third dimension. For displasia project they should be on the second dimension.\n');
+  tmpPDD = '/tmp/PDD.nii.gz';
+  systemcommand = ['mrconvert -axes 0,2,1,3 -strides 1,2,3,4 -quiet -force ' f_PDD ' ' tmpPDD];
+  fprintf(1,'  Run something like this and come back: %s\n',systemcommand);
+  VALUES = NaN;
+  error('Wrong dimensions')
+end
 
 
 %% Prepare tsfs
@@ -118,7 +94,9 @@ tsf_dot_perp2slicenormal        = tck_world;
 %% Identify parallel/perpendicular
 fprintf(1,'Identifying par/perp... ')
 for s = 1 : length(tck.data)
-   fprintf (1,'%d ',s);
+   if mod(s,10) == 0
+        fprintf (1,'%d ',length(tck.data)-s);
+   end
    this_streamline      = tck.data{s};
    this_index_par       = zeros(size(this_streamline,1),1);
    this_index_perp      = zeros(size(this_streamline,1),1);
@@ -220,6 +198,7 @@ end
 fprintf (1,'\nFinished identifying par/perp\n',s);
 
 
+
 %% Do the sampling
 for i = 1 : length(ff_values_in)
     f_values_in = ff_values_in{i};
@@ -234,21 +213,11 @@ for i = 1 : length(ff_values_in)
         VALUES = [];
         return
     end
-%     if size(V,2) > size(V,3)
-%       fprintf(1,'Woah, it seems like slices in the volume to sample from are in the third dimension. For displasia project they should be on the second dimension.\n');
-%       fprintf(1,'  ... will convert the file to have correct strides for you outside of matlab.\n')
-%       tmpvaluesfile = '/tmp/tmpvaluesfile.nii.gz';
-%       systemcommand = ['mrconvert -strides 1,2,3,4 -quiet ' f_values_in ' ' tmpvaluesfile];
-%       fprintf(1,'  executing: %s\n',systemcommand);
-%       [status,result] = system(systemcommand);
-%       fprintf('Loading %s\n',tmpvaluesfile);
-%       V = niftiread(tmpvaluesfile);
-%       info = niftiinfo(tmpvaluesfile);
-%       [status,result] = system(['rm -f ' tmpvaluesfile]);
-%     end
     fprintf(1,'[INFO] Sampling %s ', f_values_in)
     for s = 1 : length(tck.data)
-       %fprintf (1,'%d ',s);
+       if mod(s,10) == 0
+        fprintf (1,'%d ',length(tck.data)-s);
+       end
        this_streamline = tck.data{s};
        this_data_par        = zeros(size(this_streamline,1),1);
        this_data_perp       = zeros(size(this_streamline,1),1);
@@ -290,11 +259,7 @@ for i = 1 : length(ff_values_in)
        
        tsf_par.data{s}  = this_data_par;
        tsf_perp.data{s} = this_data_perp;
-       try
-        tsf_index_par.data{s} = this_index_par;
-       catch
-        fprintf(1,'Hey!')
-       end
+
     end
     fprintf (1,'\nFinished sampling %s\n',fname);
     
@@ -306,6 +271,8 @@ for i = 1 : length(ff_values_in)
     write_mrtrix_tsf(tsf_par,f_tsf_par_out);
     fprintf(1,'  [INFO] Writing tsf_perp: %s\n',f_tsf_perp_out);
     write_mrtrix_tsf(tsf_perp,f_tsf_perp_out);
+
+
  
     if regexp(varName,'^[0-9]')
        varName = ['x_' varName];
@@ -319,12 +286,12 @@ end
 f_tsf_dot_parallel2streamline = [f_prefix '_dot_parallel2streamline.tsf'];
 f_tsf_dot_perp2slicenormal    = [f_prefix '_dot_perp2slicenormal.tsf'];
 f_tsf_ncomp                   = [f_prefix '_ncomp.tsf'];
-f_tsf_par_index_out = [f_prefix '_par_index.tsf'];
-fprintf(1,'  [INFO] Writing tsf_index_par: %s\n',f_tsf_par_index_out);
-write_mrtrix_tsf(tsf_index_par,f_tsf_par_index_out)
 fprintf(1,'  [INFO] Writing tsf_dot_parallel2streamline: %s\n',f_tsf_dot_parallel2streamline);
 write_mrtrix_tsf(tsf_dot_parallel2streamline,f_tsf_dot_parallel2streamline);
 fprintf(1,'  [INFO] Writing tsf_dot_perp2slicenormal: %s\n',f_tsf_dot_perp2slicenormal);
 write_mrtrix_tsf(tsf_dot_perp2slicenormal,f_tsf_dot_perp2slicenormal);
 fprintf(1,'  [INFO] Writing tsf_ncomp: %s\n',f_tsf_ncomp);
 write_mrtrix_tsf(tsf_ncomp,f_tsf_ncomp);
+f_tsf_par_index_out = [f_prefix '_par_index.tsf'];
+fprintf(1,'  [INFO] Writing tsf_index_par: %s\n',f_tsf_par_index_out);
+write_mrtrix_tsf(tsf_index_par,f_tsf_par_index_out)

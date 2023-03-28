@@ -29,17 +29,18 @@ switch hname
         addpath /home/lconcha/software/Displasias/
         addpath(genpath('/home/lconcha/software/matGeom'))
 
-        %f_tck         = '/datos/syphon/displasia/testMRDS/dwi/one.tck';
+        % Paulina
+        f_tck         = '/datos/syphon/displasia/testMRDS/dwi/14/tck/dwi_l_out_resampled_native.tck';
+        mrds_basename  = '/datos/syphon/displasia/testMRDS/dwi/dwi_MRDS_Diff_BIC';
         
-        f_tck = '/datos/syphon/displasia/testMRDS_david/37A_l_14_out_resampled_10.tck';
-        %f_tck = '/datos/syphon/displasia/testMRDS_david/voxspace.tck';
-        mrds_basename = '/datos/syphon/displasia/testMRDS_david/37A_mrds_MRDS_Diff_BIC';
+        % David
+        %f_tck = '/datos/syphon/displasia/testMRDS_david/37A_l_14_out_resampled_10.tck';
+        %mrds_basename = '/datos/syphon/displasia/testMRDS_david/37A_mrds_MRDS_Diff_BIC';
 
         f_PDD         = [mrds_basename, '_PDDs_CARTESIAN.nii.gz'];
         f_nComp       = [mrds_basename, '_NUM_COMP.nii.gz'];
-        %f_nComp       = '/datos/syphon/displasia/testMRDS_david/7_3.nii';
-        %ff_values_in  = {[mrds_basename, '_FA.nii.gz']};
-        ff_values_in = {['/datos/syphon/displasia/testMRDS_david/fake_MRDS_FA.nii.gz']}
+        ff_values_in  = {[mrds_basename, '_FA.nii.gz']};
+        %ff_values_in = {['/datos/syphon/displasia/testMRDS_david/fake_MRDS_FA.nii.gz']}
         f_prefix      =  '/tmp/tests_MRDS';
 
 
