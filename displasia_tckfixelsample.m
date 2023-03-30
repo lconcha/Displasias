@@ -36,7 +36,7 @@ function VALUES = displasia_tckfixelsample(f_tck, f_PDD, f_nComp, ff_values_in, 
 tck_world = read_mrtrix_tracks(f_tck);
 tmptck =  '/tmp/tmp.tck';
 fprintf(1, '[INFO]  Converting tck to voxel coordinates.\n')
-systemcommand = ['tckconvert -scanner2voxel ' f_nComp ' ' f_tck ' ' tmptck ' -force -quiet'];
+systemcommand = ['export LD_LIBRARY_PATH="";tckconvert -scanner2voxel ' f_nComp ' ' f_tck ' ' tmptck ' -force -quiet'];
 fprintf(1,'  executing: %s\n',systemcommand);
 fprintf('Loading %s\n',f_tck);
 [status,result] = system(systemcommand);
@@ -68,14 +68,14 @@ end
 
 %% displasia-specific problem related to brkraw. Need to permute axes.
 volume_is_permuted = false;
-if size(PDD,2) > size(PDD,3)
-  fprintf(1,'\n\n*****\nWoah, it seems like slices in the PDD file are in the third dimension. For displasia project they should be on the second dimension.\n');
-  tmpPDD = '/tmp/PDD.nii.gz';
-  systemcommand = ['mrconvert -axes 0,2,1,3 -strides 1,2,3,4 -quiet -force ' f_PDD ' ' tmpPDD];
-  fprintf(1,'  Run something like this and come back: %s\n',systemcommand);
-  VALUES = NaN;
-  error('Wrong dimensions')
-end
+% if size(PDD,2) > size(PDD,3)
+%   fprintf(1,'\n\n*****\nWoah, it seems like slices in the PDD file are in the third dimension. For displasia project they should be on the second dimension.\n');
+%   tmpPDD = '/tmp/PDD.nii.gz';
+%   systemcommand = ['mrconvert -axes 0,2,1,3 -strides 1,2,3,4 -quiet -force ' f_PDD ' ' tmpPDD];
+%   fprintf(1,'  Run something like this and come back: %s\n',systemcommand);
+%   VALUES = NaN;
+%   error('Wrong dimensions')
+% end
 
 
 %% Prepare tsfs
@@ -191,6 +191,8 @@ for s = 1 : length(tck.data)
     tsf_ncomp.data{s}                     = this_nComp;
     tsf_dot_parallel2streamline.data{s}   = this_dot_parallel2streamline;
     tsf_dot_perp2slicenormal.data{s}      = this_dot_perp2slicenormal;
+    VALUES.dot_parallel2streamline(s,:)   = this_dot_parallel2streamline;
+    VALUES.dot_perp2slicenormal(s,:)      = this_dot_perp2slicenormal;
    catch
     fprintf(1,'Hey!')
    end
