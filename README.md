@@ -1,6 +1,16 @@
 # ratCortex-dMRIstreams
 
-Code to process dMRI volumes and create cortical streamlines in rat data. :information_source: [**Info & details**](https://hackmd.io/@servindc/ratCortex-dMRI)
+Code to process dMRI volumes and create cortical streamlines in rat data. 
+
+Code by:
+* David Cortés-Servín
+* Aylín Pérez-Moriel
+* Fernando Palazuelos
+* Luis Concha
+
+Institute of Neurobiology, UNAM; Centro de Investigación en Matemáticas, A.C.
+
+
 
 ## Setup
 
