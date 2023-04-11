@@ -193,6 +193,7 @@ for s = 1 : length(tck.data)
     tsf_dot_perp2slicenormal.data{s}      = this_dot_perp2slicenormal;
     VALUES.dot_parallel2streamline(s,:)   = this_dot_parallel2streamline;
     VALUES.dot_perp2slicenormal(s,:)      = this_dot_perp2slicenormal;
+    VALUES.ncomp{s}                       = this_nComp;
    catch
     fprintf(1,'Hey!')
    end
@@ -215,7 +216,7 @@ for i = 1 : length(ff_values_in)
         VALUES = [];
         return
     end
-    fprintf(1,'[INFO] Sampling %s ', f_values_in)
+    fprintf(1,'[INFO] Sampling %s \n', f_values_in)
     for s = 1 : length(tck.data)
        if mod(s,10) == 0
         fprintf (1,'%d ',length(tck.data)-s);
@@ -285,6 +286,7 @@ end
 
 
 %%%%% writer overall tsf files
+fprintf(1,'[INFO] Writing tsf files\n');
 f_tsf_dot_parallel2streamline = [f_prefix '_dot_parallel2streamline.tsf'];
 f_tsf_dot_perp2slicenormal    = [f_prefix '_dot_perp2slicenormal.tsf'];
 f_tsf_ncomp                   = [f_prefix '_ncomp.tsf'];
@@ -297,3 +299,29 @@ write_mrtrix_tsf(tsf_ncomp,f_tsf_ncomp);
 f_tsf_par_index_out = [f_prefix '_par_index.tsf'];
 fprintf(1,'  [INFO] Writing tsf_index_par: %s\n',f_tsf_par_index_out);
 write_mrtrix_tsf(tsf_index_par,f_tsf_par_index_out)
+
+fprintf(1,'[INFO] Writing text files\n');
+varNames = fieldnames(VALUES.par);
+for n = 1 : length(varNames)
+  thisVarName = varNames{n};
+  f_txt = [f_prefix '_' thisVarName '.txt'];
+  thismat = cell2mat(VALUES.par.(thisVarName));
+    fprintf(1,'  [INFO] Writing %s\n',f_txt);
+    save(f_txt,'thismat','-ascii');
+  thismat = cell2mat(VALUES.perp.(thisVarName));
+    fprintf(1,'  [INFO] Writing %s\n',f_txt);
+    save(f_txt,'thismat','-ascii');   
+end
+f_txt = [f_prefix '_dot_parallel2streamline.txt'];
+    thismat = VALUES.dot_parallel2streamline;
+    fprintf(1,'  [INFO] Writing %s\n',f_txt);
+    save(f_txt,'thismat','-ascii');   
+f_txt = [f_prefix '_dot_perp2slicenormal.txt'];
+    thismat = VALUES.dot_perp2slicenormal;
+    fprintf(1,'  [INFO] Writing %s\n',f_txt);
+    save(f_txt,'thismat','-ascii');   
+f_txt = [f_prefix '_nComp.txt'];
+    thismat = cell2mat(VALUES.ncomp);
+    fprintf(1,'  [INFO] Writing %s\n',f_txt);
+    save(f_txt,'thismat','-ascii'); 
+   
