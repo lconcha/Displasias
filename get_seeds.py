@@ -23,7 +23,7 @@ def sort_points(seeds):
     clf = NearestNeighbors(n_neighbors=2).fit(seeds)
     G = clf.kneighbors_graph()  # sparse N x N matrix
     
-    T = nx.from_scipy_sparse_matrix(G)
+    T = nx.from_scipy_sparse_array(G)
     
     paths = [list(nx.dfs_preorder_nodes(T, i)) for i in range(len(seeds))]
 
