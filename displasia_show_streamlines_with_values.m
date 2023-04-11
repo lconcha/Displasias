@@ -1,4 +1,17 @@
-function h = displasia_show_streamlines_with_values(f_tck,values,clim, thetitle)
+function h = displasia_show_streamlines_with_values(f_tck,values,clim, thetitle, cmap)
+
+% prepare colormaps
+cmap_div  = uint8(cbrewer('div','PuOr',128, 'spline') .* 255);
+cmap_warm = uint8(cbrewer('seq','YlOrBr',128,'spline') .* 255); cmap_warm = flip(cmap_warm,1);
+%cmap_cool = uint8(cbrewer('seq','PuBuGn',128,'spline') .* 255); cmap_cool = flip(cmap_cool,1);
+cmap_cool = uint8(cbrewer('seq','YlGnBu',128,'spline') .* 255); cmap_cool = flip(cmap_cool,1);
+cmap_pval = hot(128); cmap_pval = flip(cmap_pval,1);
+
+if nargin < 5
+   cmap_to_use = cmap_cool;
+else
+   cmap_to_use = cmap;
+end
 
 
 fprintf(1,'Using tck: %s\n',f_tck);
@@ -23,12 +36,7 @@ mygray              = [0.5 0.5 0.5];
 mylightgray         = [0.8 0.8 0.8];
 this_marker_size    = 50;
 
-% prepare colormaps
-cmap_div  = uint8(cbrewer('div','PuOr',128, 'spline') .* 255);
-cmap_warm = uint8(cbrewer('seq','YlOrBr',128,'spline') .* 255); cmap_warm = flip(cmap_warm,1);
-%cmap_cool = uint8(cbrewer('seq','PuBuGn',128,'spline') .* 255); cmap_cool = flip(cmap_cool,1);
-cmap_cool = uint8(cbrewer('seq','YlGnBu',128,'spline') .* 255); cmap_cool = flip(cmap_cool,1);
-cmap_pval = hot(128); cmap_pval = flip(cmap_pval,1);
+
 
 
 
@@ -46,7 +54,7 @@ end
 if ~isempty(clim)
     set(gca,'Clim',clim)
 end
-set(gca,'colormap',cmap_cool)
+set(gca,'colormap',cmap_to_use)
 view(180,270)
 grid off; axis off; axis equal
 hold off;
