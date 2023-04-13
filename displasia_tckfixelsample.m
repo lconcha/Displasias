@@ -304,11 +304,12 @@ fprintf(1,'[INFO] Writing text files\n');
 varNames = fieldnames(VALUES.par);
 for n = 1 : length(varNames)
   thisVarName = varNames{n};
-  f_txt = [f_prefix '_' thisVarName '.txt'];
-  thismat = cell2mat(VALUES.par.(thisVarName));
+  f_txt = [f_prefix '_' thisVarName '_par.txt'];
+    thismat = cell2mat(VALUES.par.(thisVarName));
     fprintf(1,'  [INFO] Writing %s\n',f_txt);
     save(f_txt,'thismat','-ascii');
-  thismat = cell2mat(VALUES.perp.(thisVarName));
+  f_txt = [f_prefix '_' thisVarName '_perp.txt'];
+    thismat = cell2mat(VALUES.perp.(thisVarName));
     fprintf(1,'  [INFO] Writing %s\n',f_txt);
     save(f_txt,'thismat','-ascii');   
 end
