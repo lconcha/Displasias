@@ -20,9 +20,11 @@ mInputs=`echo $Inputs | sed 's/ /,/g'`
 
 matlabjobfile=/tmp/matlabjobfile.m
 
+####################### matlab job
 echo "
-addpath('/home/lconcha/software/mrtrix_matlab/matlab');
-addpath('/home/lconcha/software/Displasias/');
+
+addpath('/home/inb/lconcha/fmrilab_software/mrtrix3/matlab/');
+addpath('/misc/mansfield/lconcha/software/Displasias');
 
   f_tck     = '$tck';
   f_PDD     = '$PDD';
@@ -33,7 +35,9 @@ addpath('/home/lconcha/software/Displasias/');
   
 VALUES = displasia_tckfixelsample(f_tck, f_PDD, f_ncomp, ff_values, f_prefix);
 exit
+
 " > $matlabjobfile
+###################### end of matlab job
 
 cat $matlabjobfile
 
