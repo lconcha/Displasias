@@ -103,6 +103,7 @@ done
 
 for s in $slicesToProcess
 do
+  s=$(zeropad $s 2)
   mkdir $outfolder/${s}
   my_do_cmd mrcalc -quiet -force ${tmpDir}/plines.nii.gz 0 -mul ${tmpDir}/plane.nii 
   my_do_cmd mredit -quiet -force -plane 2 $s 1 ${tmpDir}/plane.nii
