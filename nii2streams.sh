@@ -55,7 +55,16 @@ $script_dir/make_grid.sh $input1 $input2
 
 
 # Run 'mincLaplace' to generate `*_minc_thick_*.nii`:
+# make sure we are using minc1 (netcdf)
 input1=$dir_name/${prefix}_${side}_grid_123.mnc
+str_type=$(mincheader $input1 | grep hdf5)
+if [ ! -z "$str_type" ]
+then
+  echolor yellow "[INFO] Converting from minc2 (hdf5) to minc1 (netcdf)"
+  my_do_cmd mincconvert -clobber $input1 $dir_name/${prefix}_${side}_grid_123_v1.mnc
+  input1=$dir_name/${prefix}_${side}_grid_123_v1.mnc
+fi
+
 echo -e "\n  Running: run_grid.sh $input1 '_thick'"
 $script_dir/run_grid.sh $input1 '_thick' 0.1 200
 
