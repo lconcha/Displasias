@@ -42,8 +42,10 @@ while true
     if tline == -1; fprintf(1,'End of file\n');break;end
     strline = regexprep(tline,'".*",','');
     eval(['m = ['  strline  ' ];' ])
+    if length(m) < 50; fprintf(1, 'nono\n'); continue;end
     strnum = strnum +1;
-    fprintf(1,'Adding data to streamline %d\n',strnum)
+    fprintf(1,'Adding data to streamline %d , linenum %d\n',strnum,linenum)
+    size(m)
     data(strnum,:) = m;
     disp(m(1:3));
 end
@@ -52,7 +54,7 @@ fclose(fid);
 
 values = data';
 clim = [0 1];
-thetitle = 'test';
+thetitle = 'FA';
 cmap = cbrewer('seq','YlGnBu',100);
 cmap = flipdim(cmap,1);
 h = displasia_show_streamlines_with_values(f_tck,values,clim, thetitle, cmap);
