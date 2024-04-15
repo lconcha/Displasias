@@ -1,11 +1,13 @@
 % scripts to create figures for OHBM2024 with Olimpia results
 
+[status,hname]= unix('hostname');
+hname = deblank(hname)
 
 switch hname
-    case 'mansfield'
+    case 'lauterbur'
         addpath('/home/inb/soporte/lanirem_software/mrtrix3/matlab/')
         f_tck = '/misc/mansfield/lconcha/exp/displasia/paraArticulo1/exampleSubject/streamlines_50_10.tck';
-        figuresfolder = '/misc/mansfield/lconcha/exp/displasia/paraArticulo1/results/figures';
+        figuresfolder = '/misc/mansfield/lconcha/exp/displasia/paraOHBM2024/figs/';
         f_metrics = '/misc/nyquist/lconcha/displasia_AES2021/displasia/metrics_and_ranges.txt';
         f_ranges  = '/misc/mansfield/lconcha/exp/displasia/paraArticulo1/ranges.csv';
         addpath /home/inb/lconcha/fmrilab_software/tools/matlab/toolboxes/cbrewer/cbrewer
@@ -25,36 +27,29 @@ switch hname
 end
 
 
+txtdir = '/misc/sherrington2/Olimpia/proyecto/stats_images/mean/txt/';
 
-f_txt = '/misc/sherrington2/Olimpia/proyecto/stats_images/mean/txt/FA/mean_FA_l_ctrl.txt';
-fid = fopen(f_txt);
 
-nPoints = 50;
-nStreamlines = 10;
-linenum = 0;
-data = nan(nStreamlines,nPoints);
-strnum = 0;
-while true
-    linenum = linenum +1;
-    if linenum <2 ; fprintf(1,'Skipping header\n');continue;end
-    tline = fgets(fid);
-    fprintf(1,'linenum %d : %s\n',linenum, tline)
-    if tline == -1; fprintf(1,'End of file\n');break;end
-    strline = regexprep(tline,'".*",','');
-    eval(['m = ['  strline  ' ];' ])
-    if length(m) < 50; fprintf(1, 'nono\n'); continue;end
-    strnum = strnum +1;
-    fprintf(1,'Adding data to streamline %d , linenum %d\n',strnum,linenum)
-    size(m)
-    data(strnum,:) = m;
-    disp(m(1:3));
+hemis = ['l' 'r'];
+ps    = {char('01') char('05')};
+
+for i = 1 : length(hemis)
+    for j = 1 : length(ps)
+        hemi = hemis(i);
+        pthresh = ps{i};
+
+        fh = displasia_oli_4plots('FA',[0 0.6],[-0.2 0.2],pthresh,hemi,figuresfolder);
+        close(fh)
+        fh = displasia_oli_4plots('Cc',[0 0.6],[-0.2 0.2],pthresh,hemi,figuresfolder);
+        close(fh)
+        fh = displasia_oli_4plots('uFA',[0 1],[-0.2 0.2],pthresh,hemi,figuresfolder);
+        close(fh)
+        fh = displasia_oli_4plots('ad',[0 2],[-0.5 0.5],pthresh,hemi,figuresfolder);
+        close(fh)
+        fh = displasia_oli_4plots('rd',[0 2],[-0.5 0.5],pthresh,hemi,figuresfolder);
+        close(fh)
+        fh = displasia_oli_4plots('MD',[0 2],[-0.5 0.5],pthresh,hemi,figuresfolder);
+        close(fh)
+
+    end
 end
-fclose(fid);
-
-
-values = data';
-clim = [0 1];
-thetitle = 'FA';
-cmap = cbrewer('seq','YlGnBu',100);
-cmap = flipdim(cmap,1);
-h = displasia_show_streamlines_with_values(f_tck,values,clim, thetitle, cmap);
