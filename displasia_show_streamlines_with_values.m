@@ -18,7 +18,7 @@ fprintf(1,'Using tck: %s\n',f_tck);
 
 
 if isempty(values)
-  values = ones()
+  values = ones(50,10);
 end
 
 
