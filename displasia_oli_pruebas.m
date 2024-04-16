@@ -6,7 +6,7 @@ addpath(genpath('/misc/mansfield/lconcha/software/Displasias'))
 
 % Especificar la ruta de unos tck que son los que vamos a usar como
 % template
-f_tck = '/misc/mansfield/lconcha/exp/displasia/paraArticulo1/exampleSubject/streamlines_50_10.tck';
+f_tck = 'example_files/streamlines_50_10.tck';
 
 rango_color = [0 0.4];
 
