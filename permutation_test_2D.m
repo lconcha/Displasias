@@ -28,7 +28,7 @@ rB = reshape(groupB,nr*nc,ngB);
 rAB = cat(2,rA,rB);
 
 
-truediff = mean(groupA,3) - mean(groupB,3);
+truediff = nanmean(groupA,3) - nanmean(groupB,3);
 
 allpermdiff     = zeros(nr,nc,ndiffperms);
 alldiffdeltabin = zeros(nr,nc,ndiffperms);
@@ -38,7 +38,7 @@ for perm = 1 : ndiffperms
     idx2 = permutation(ngA+1:end);
     randomSample1 = groupAB(:,:,idx1);
     randomSample2 = groupAB(:,:,idx2);
-    thispermdiff = mean(randomSample1,3) - mean(randomSample2,3);
+    thispermdiff = nanmean(randomSample1,3) - nanmean(randomSample2,3);
     allpermdiff(:,:,perm) = thispermdiff;
     thisdiffdeltabin = truediff > thispermdiff;
     alldiffdeltabin(:,:,perm) = thisdiffdeltabin;
@@ -84,11 +84,11 @@ pvals.clusterlabels.Student = L;
 
 if doPlot
     figure;
-    cmin = min([groupA(:);groupB(:)]);
-    cmax = max([groupA(:);groupB(:)]);
-    subplot(3,3,1);imagesc(mean(groupA,3));set(gca,'Clim',[cmin cmax]);colorbar;title('A')
-    subplot(3,3,2);imagesc(mean(groupB,3));set(gca,'Clim',[cmin cmax]);colorbar;title('B')
-    subplot(3,3,3);imagesc(truediff);set(gca,'Clim',[-cmax cmax]);colorbar;title('A-B')
+    cmin = nanmin([groupA(:);groupB(:)]);
+    cmax = nanmax([groupA(:);groupB(:)]);
+    subplot(3,3,1);imagesc(nanmean(groupA,3));set(gca,'Clim',[cmin cmax]);colorbar;title('A')
+    subplot(3,3,2);imagesc(nanmean(groupB,3));set(gca,'Clim',[cmin cmax]);colorbar;title('B')
+    subplot(3,3,3);imagesc(truediff);set(gca,'Clim',[-cmax.*0.2 cmax.*0.2]);colorbar;title('A-B')
     subplot(3,3,4);imagesc(pAgtB);  set(gca,'Clim',[0 0.05]);colorbar;title('pAgtB')
     subplot(3,3,5);imagesc(pAltB);  set(gca,'Clim',[0 0.05]);colorbar;title('pAltB')
     subplot(3,3,6);imagesc(pAdiffB);set(gca,'Clim',[0 0.05]);colorbar;title('pAdiffB')
