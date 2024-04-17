@@ -57,8 +57,11 @@ for perm = 1 : nclusperms
     idx2 = permutation(ngA+1:end);
     randomSample1 = groupAB(:,:,idx1);
     randomSample2 = groupAB(:,:,idx2);
-    %pvals = permutation_test_2D(randomSample1,randomSample2,ndiffperms,clusterformingpthreshold,conn,false);
-    pvals = displasia_ttest_2D(randomSample1,randomSample2,clusterformingpthreshold,conn,false);
+    if ndiffperms > 0
+        pvals = permutation_test_2D(randomSample1,randomSample2,ndiffperms,clusterformingpthreshold,conn,false);
+    else
+        pvals = displasia_ttest_2D(randomSample1,randomSample2,clusterformingpthreshold,conn,false);
+    end
     pAgtB  (:,:,perm) = pvals.pAgtB;
     pAltB  (:,:,perm) = pvals.pAltB;
     pAdiffB(:,:,perm) = pvals.pAdiffB;
@@ -107,12 +110,16 @@ if doPlot
     lims = get(gca,'Clim');
         newlims = [-abs(max(lims)) max(lims)];
         set(gca,'Clim',newlims);
-    %subplot(3,3,4);imagesc(pcluster.pAgtB');  set(gca,'Clim',[0 0.05]);colorbar;title(['pAgtB ('   num2str(ndiffperms) ' perms)']); set(gca,'colormap',cmap_pval);
-    %subplot(3,3,5);imagesc(pcluster.pAltB');  set(gca,'Clim',[0 0.05]);colorbar;title(['pAltB ('   num2str(ndiffperms) ' perms)']); set(gca,'colormap',cmap_pval);
-    %subplot(3,3,7);imagesc(pcluster.cluster_pvals_2D.AgtB');set(gca,'Clim',[0 0.05]);colorbar;title(['pcluster AgtB ('   num2str(nclusperms) ' perms)']); set(gca,'colormap',cmap_pval);
-    %subplot(3,3,8);imagesc(pcluster.cluster_pvals_2D.AltB');set(gca,'Clim',[0 0.05]);colorbar;title(['pcluster AltB ('   num2str(nclusperms) ' perms)']); set(gca,'colormap',cmap_pval);
-    subplot(3,3,5);imagesc(pcluster.cluster_pvals_2D.AdiffB');set(gca,'Clim',[0 clusterformingpthreshold]);colorbar;title(['pcluster AdiffB ('   num2str(nclusperms) ' perms)']); set(gca,'colormap',cmap_pval);
-    subplot(3,3,6);imagesc(pcluster.pAdiffB');set(gca,'Clim',[0 clusterpthreshold]);colorbar;title(['pAdiffB']); set(gca,'colormap',cmap_pval);
+    
+    thistitle = ['p_{cluster} A\neqB ('   num2str(nclusperms) ' perms) | p_{cf}=' num2str(clusterformingpthreshold) ')'];
+    subplot(3,3,5);imagesc(pcluster.cluster_pvals_2D.AdiffB');set(gca,'Clim',[0 clusterpthreshold]);colorbar;title(thistitle); set(gca,'colormap',cmap_pval);
+    
+    if ndiffperms > 0
+       thistitle = ['p A\neqB (' num2str(ndiffperms) ' perms/vertex)'];
+    else
+       thistitle = ['p_{vertex} A\neqB (ttest)'];
+    end
+    subplot(3,3,6);imagesc(pcluster.pAdiffB');set(gca,'Clim',[0 clusterformingpthreshold]);colorbar;title(thistitle); set(gca,'colormap',cmap_pval);
     subplot(3,3,7); histogram(randclustersizes); title('Distribution of random cluster sizes'); xline(refclustersize);
     
 end
