@@ -93,8 +93,8 @@ if doPlot
     figure('units','normalized','outerposition',[0 0 1 1]);
     cmin = min([groupA(:);groupB(:)]);
     cmax = max([groupA(:);groupB(:)]);
-    subplot(3,3,1);imagesc(mean(groupA,3)');set(gca,'Clim',[cmin cmax]);colorbar;title(['A:' groupA_name ', ' metricName]); set(gca,'colormap',cmap_cool);
-    subplot(3,3,2);imagesc(mean(groupB,3)');set(gca,'Clim',[cmin cmax]);colorbar;title(['B:' groupB_name ', ' metricName]); set(gca,'colormap',cmap_cool);
+    subplot(3,3,1);imagesc(nanmean(groupA,3)');set(gca,'Clim',[cmin cmax]);colorbar;title(['A:' groupA_name ', ' metricName]); set(gca,'colormap',cmap_cool);
+    subplot(3,3,2);imagesc(nanmean(groupB,3)');set(gca,'Clim',[cmin cmax]);colorbar;title(['B:' groupB_name ', ' metricName]); set(gca,'colormap',cmap_cool);
     subplot(3,3,3);imagesc(pcluster.diff')';colorbar;title('A-B'); set(gca,'colormap',cmap_div);
     lims = get(gca,'Clim');
         newlims = [-abs(max(lims)) max(lims)];
