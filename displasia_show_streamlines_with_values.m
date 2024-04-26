@@ -60,6 +60,6 @@ grid off; axis off; axis equal
 hold off;
 set(gcf,'Color','k')
 h_colorbar = colorbar(gca,'Color',mygray);
-title(thetitle,'Color','w','Interpreter','none')
+title(thetitle,'Color','w')
 
 h = gcf;

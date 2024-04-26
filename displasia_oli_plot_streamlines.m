@@ -1,9 +1,12 @@
-function h = displasia_oli_plot_streamlines(f_tck,RESULTS,metric,comparison,msize,free_clim,pclus_threshold,puncorr_threshold)
+function h = displasia_oli_plot_streamlines(f_tck,RESULTS,metric,comparison,msize,clim,pclus_threshold,puncorr_threshold)
 
 
 mygray              = [0.5 0.5 0.5];
 mylightgray         = [0.8 0.8 0.8];
-forced_clim         = [-1 1];
+
+
+
+
 
 %f_tck = '/misc/mansfield/lconcha/exp/displasia/paraArticulo1/exampleSubject/streamlines_50_10.tck';
 %f_tck = '/datos/syphon/displasia/paraArticulo1/exampleSubject/streamlines_50_10.tck';
@@ -48,14 +51,14 @@ end
 view(180,270)
 grid off; axis off; axis equal
 
-
-if free_clim
+if isempty(clim)
     lims = get(gca,'Clim');
     newlims = [abs(max(lims))*-1 max(lims)];
     set(gca,'Clim',newlims);
 else
-    set(gca,'Clim',forced_clim);
-end
+    set(gca,'Clim',clim);
+end 
+
 
 h_colorbar = colorbar(gca,'Color','w');
 h_colorbar.Label.String = 'd-Cohen';

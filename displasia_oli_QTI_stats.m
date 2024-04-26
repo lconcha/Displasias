@@ -2,18 +2,19 @@
 %%%% NOT FINISHED YET!!! April 17 2024
 
 %%%%%%% OPTIONS %%%%%%%%%%%%%%%
-results_folder = '/misc/sherrington2/Olimpia/proyecto/qti+/csv_metrics_p';
-clusterformingpthreshold = 0.05;
+results_folder           = '/misc/sherrington2/Olimpia/proyecto/qti+/csv_metrics_p';
+clusterformingpthreshold = 0.01;
 clusterpthreshold        = 0.05;
-ndiffperms               = 0;% Use 0 for permuting only at cluster level (ttests at vertex level). Use >0 for permutation tests at vertex  and cluster levels.
+ndiffperms               = 5000;% Use 0 for permuting only at cluster level (ttests at vertex level). Use >0 for permutation tests at vertex  and cluster levels.
 nclusperms               = 5000;
 conn                     = 8;
 doPlot                   = true;
 rng(1);                  % seed.
-%hemi                     = 1; % 1=left, 2=right
-figuresfolder            =  '/misc/mansfield/lconcha/exp/displasia/oli_pruebas/';
-f_tck_l = 'example_files/R82B_l_perm.tck';
-f_tck_r = 'example_files/R82B_r_perm.tck';
+figuresfolder            =  '/misc/mansfield/lconcha/exp/displasia/oli_OHBM2024/';
+%f_tck_l = 'example_files/R82B_l_perm.tck';
+%f_tck_r = 'example_files/R82B_r_perm.tck';
+f_tck_l  = 'example_files/Fisher_l_out_resampled_10.tck';
+f_tck_r  = 'example_files/Fisher_r_out_resampled_10.tck';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -49,10 +50,10 @@ for f = 1 : length(D)
                         doPlot,...
                         f_tck);
         
-         permstring = [num2str(ndiffperms) '-diffperm_' num2str(nclusperms) '-clusperm']
+         permstring = [num2str(ndiffperms) '-diffperm_' num2str(nclusperms) '-clusperm'];
 
-         f_svg = fullfile(figuresfolder,['00_' permstring '_'  char(DATA.Metric) '-' s_hemi '.svg']);
-         f_png = fullfile(figuresfolder,['00_' permstring '_' char(DATA.Metric) '-' s_hemi '.png']);
+         f_svg = fullfile(figuresfolder,['01_' permstring '_'  char(DATA.Metric) '-' s_hemi '.svg']);
+         f_png = fullfile(figuresfolder,['01_' permstring '_' char(DATA.Metric) '-' s_hemi '.png']);
          set(gcf, 'InvertHardcopy', 'off','Renderer','painters');
          saveas(gcf, f_svg);
          saveas(gcf, f_png);
