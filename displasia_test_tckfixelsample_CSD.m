@@ -9,11 +9,12 @@ addpath(genpath('/misc/lauterbur/lconcha/code/geom3d'))
 f_tck         = 'dwi_l_out_resampled_native.tck';
 %f_tck = 'permuted.tck'
 f_PDD         = 'peaks3.nii';
-%f_MRDS_ncomp  = 'afd_count.nii';
-f_MRDS_ncomp   = 'one_two.nii';
-f_AFD         = 'afd3.nii';
-ff_values     = {f_AFD};
-f_prefix      = './prefix';
+f_ncomp  = 'afd_count.nii';
+%f_MRDS_ncomp   = 'one_two.nii';
+f_AFD         = 'afd_repeat3.nii';
+f_check       = 'one_two_4d.nii';
+ff_values     = {f_AFD,f_check};
+f_prefix      = './prefix2';
 
-VALUES = displasia_tckfixelsample_CSD(f_tck, f_PDD, f_MRDS_ncomp, ff_values, f_prefix);
+VALUES = displasia_tckfixelsample_CSD(f_tck, f_PDD, f_ncomp, ff_values, f_prefix);
 

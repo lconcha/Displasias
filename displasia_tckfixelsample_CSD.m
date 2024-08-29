@@ -135,9 +135,9 @@ for s = 1 : length(tck.data)
 
        
        thisnComp = interp3(nComp,mindices(2), mindices(1), mindices(3), 'nearest');
-       % if s==50 & p==4
-       %   disp(' aqui');
-       % end
+       if s==50 & p==4
+         fprintf('Checking time... ncomp for streamline %d, point %d, is %d\n',s,p,thisnComp);
+       end
 
 
        if thisnComp < 3
@@ -195,7 +195,8 @@ fprintf (1,'\nFinished identifying par/perp\n',s);
 for i = 1 : length(ff_values_in)
     f_values_in = ff_values_in{i};
     fprintf('Loading %s ... ',f_values_in);
-    V    = niftiread(f_values_in);
+    %V    = niftiread(f_values_in);
+    [info,V] = displasia_load_nii(f_values_in);
     fprintf(1,'\n');
     info      = niftiinfo(f_values_in);
     [fold,fname,ext] = fileparts(info.Filename);
