@@ -247,7 +247,13 @@ for i = 1 : length(ff_values_in)
            val_perp = vals(indexperp);
     
            this_data_par(p,1)  = val_par;
-           this_data_perp(p,1) = val_perp;       
+           this_data_perp(p,1) = val_perp;   
+
+           if s==3 & p==1
+               fprintf(1,'checking time\n');
+               fprintf(1,'  Streamline %d, point %d. Parallel value is %1.3g, Perp value is %1.3g\n',s,p,val_par,val_perp);
+
+           end
        end
        
        tsf_par.data{s}  = this_data_par;
