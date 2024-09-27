@@ -24,7 +24,7 @@ do
       mask=${imagesdir}/${grp}/${rat}/${day}/derivatives/dwi/${rat}_${day}_${grp}_DTInolin_FA.nii.gz
       outdir=${imagesdir}/${grp}/${rat}/${day}/derivatives/dwi/dki
       if [ ! -f $dwi ]; then echo $dwi >> $fails;fi
-      fsl_sub -N dki_${rat}${day} -l $logsdir -s smp,6 \
+      #fsl_sub -N dki_${rat}${day} -l $logsdir -s smp,6 \
         displasia_run_DKI.sh $dwi $bval $bvec $mask $outdir
     done
   done

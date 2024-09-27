@@ -14,10 +14,15 @@ echolor cyan "Looking for $fcheck"
 if [ ! -f $fcheck ]
 then
     echolor cyan "  DKI output not found. Will run dipy_fit_dki"
-    dipy_fit_dki \
-    --b0_threshold 40 \
-    --out_dir $outdir \
-    $dwi $bval $bvec $mask
+    if [ ! -f $mask ]
+    then
+        echolor red "  Mask not found: $mask"
+    else
+        dipy_fit_dki \
+        --b0_threshold 40 \
+        --out_dir $outdir \
+        $dwi $bval $bvec $mask
+    fi
 else
     echolor green "Kurtosis ran. File exists: $fcheck"
 fi
