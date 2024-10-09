@@ -62,6 +62,7 @@ if [ ! -z "$str_type" ]
 then
   echolor yellow "[INFO] Converting from minc2 (hdf5) to minc1 (netcdf)"
   my_do_cmd mincconvert -clobber $input1 $dir_name/${prefix}_${side}_grid_123_v1.mnc
+  my_do_cmd mnc2nii $dir_name/${prefix}_${side}_grid_123_v1.mnc $dir_name/${prefix}_${side}_grid_123_v1.nii
   input1=$dir_name/${prefix}_${side}_grid_123_v1.mnc
 fi
 
