@@ -1,5 +1,7 @@
 function h = displasia_show_streamlines_with_values(f_tck,values,clim, thetitle, cmap)
 
+% addpath /misc/lauterbur2/lconcha/code/cbrewer/cbrewer
+
 % prepare colormaps
 cmap_div  = uint8(cbrewer('div','PuOr',128, 'spline') .* 255);
 cmap_warm = uint8(cbrewer('seq','YlOrBr',128,'spline') .* 255); cmap_warm = flip(cmap_warm,1);
