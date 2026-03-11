@@ -11,8 +11,8 @@ vars  = {'FA',  [0.1 0.4],  [0 1];...
          'ad',  [0.5 1.3]   [0 Inf];...
          'rd',  [0.5 0.9]   [0 Inf];...
          'Cc',  [0 0.3],    [0 1];...
-         'MKa', [0.1 1.0]   [-Inf 10];...
-         'MKi', [0 0.8]     [-Inf 10];...
+         'MKa', [0.1 1.0]   [-Inf 5];...
+         'MKi', [0 0.8]     [-Inf 5];...
          'uFA', [0.5 0.85],  [0 1];};
 
 hemis = {'r','l'};
@@ -51,15 +51,18 @@ end
 
 % remove bad vertices
 % The valid range for FA, μFA and CC was between 0 and 1
+badidx = [];
 for v = 1 : length(vars)
     var = vars{v,1};
     thisM = fullM(:,:,:,v,:);
     lolim = vars{v,3}(1);
     hilim = vars{v,3}(2);
     fprintf(1,'Making sure that %s is within [%1.2g %1.2g]\n',var,lolim,hilim);
-    badidx = find(thisM <= lolim | thisM > hilim);
+    newbadidx = find(thisM <= lolim | thisM > hilim);
+    fprintf(1,'  Found %d bad vertices in %s\n',length(newbadidx),var);
+    badidx = union(badidx,newbadidx);
     nbad = length(badidx);
-    fprintf(1,'  Converting %d vertices to NaN\n',nbad);
+    fprintf(1,'  Updated total of baidx is %d vertices, converted to NaN\n',nbad);
     thisM(badidx) = NaN;
     fullM(:,:,:,v,:) = thisM;
 end

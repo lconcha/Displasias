@@ -3,7 +3,7 @@
 
 figuresdir = '/misc/lauterbur2/lconcha/exp/displasia/olimpia/figures_lconcha/';
 
-displasia_oli_load_all_metrics
+%displasia_oli_load_all_metrics
 
 
 for varn = 1 : length(vars)

@@ -12,8 +12,6 @@ end
 f_tck = './example_files/streamlines_50_10.tck';
 
 function local_histogram(vctrl,vbcnu,xlim,hemi)
-  %histogram(vctrl); hold on;
-  %histogram(vbcnu);
   dNPoints = 100;
   colorctrl = [0.4 0.4 0.4];
   colorbcnu = [47/255 79/255 79/255];
@@ -39,6 +37,11 @@ end
 
 
 cmap = parula(128);
+%s_cmap = 'batlowW';
+%cmap = load(['/misc/lauterbur2/lconcha/code/ScientificColourmaps/' s_cmap '/' s_cmap '.mat']);
+%cmap = cmap.(s_cmap);
+%cmap = flipdim(cbrewer('seq','YlGnBu',100),1);
+%cmap = flipdim(cbrewer('seq','PuBuGn',200,'linear'),1);
 clim = vars{varn,2};
 var  = vars{varn,1};
 
@@ -75,15 +78,11 @@ ax = gca; ch = ax.Colorbar; ch.Ticks = clim;
 subplot(325);
 Mctrl = squeeze(nanmean(fullM(:,:,1,varn,groupidx==1),5));
 Mbcnu = squeeze(nanmean(fullM(:,:,1,varn,groupidx==2),5));
-% vctrl = reshape(Mctrl(:,:,1),[1 numel(Mctrl(:,:,1))]);
-% vbcnu = reshape(Mbcnu(:,:,1),[1 numel(Mbcnu(:,:,1))]);
 local_histogram(Mctrl(:),Mbcnu(:),clim,hemis{1})
 
 subplot(326);
 Mctrl = squeeze(nanmean(fullM(:,:,2,varn,groupidx==1),5));
 Mbcnu = squeeze(nanmean(fullM(:,:,2,varn,groupidx==2),5));
-% vctrl = reshape(Mctrl(:,:,2),[1 numel(Mctrl(:,:,2))]);
-% vbcnu = reshape(Mbcnu(:,:,2),[1 numel(Mbcnu(:,:,2))]);
 local_histogram(Mctrl(:),Mbcnu(:),clim,hemis{2})
 
 set(gcf,'Color','k')

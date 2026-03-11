@@ -87,6 +87,18 @@ pcluster.cluster_pvals_2D.AdiffB  = paintclusterpval(pcluster.clusterlabels.Adif
 
 pcluster.dcohen  = dcohen2D(groupA,groupB);
 
+% add spatial information about tck
+tck = read_mrtrix_tracks(f_tck);
+pcluster.xyz = zeros([size(pcluster.dcohen) 3]);
+for s = 1 : length(tck.data)
+  thisline              = tck.data{s};
+  pcluster.xyz(s,:,:) = thisline;
+end
+
+
+pcluster.clusterformingpthreshold = clusterformingpthreshold;
+pcluster.clusterpthreshold = clusterpthreshold;
+
 RESULTS.clusterstats.(metricName) = pcluster;
 
 if doPlot
