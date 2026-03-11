@@ -28,7 +28,8 @@ do
    
    echolor green "Now fit NODDI"
 
-   outdir=/misc/lauterbur2/lconcha/displasias/pau_AMICO/NODDI/${grp}/${day}/${rat}
-   displasia_fit_noddi.py $dwi $bvec $bval $mask $outdir 
+   outdir=/misc/lauterbur2/lconcha/displasias/pau_AMICO_dPar001/NODDI/${grp}/${day}/${rat}
+   fsl_sub -N noddi -l /misc/lauterbur2/lconcha/displasias/logs \
+     displasia_fit_noddi.py $dwi $bvec $bval $mask $outdir 
  
 done

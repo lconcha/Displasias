@@ -34,6 +34,8 @@ print( f'  + scheme  : { scheme }' )
 ae.load_data(dwi, scheme, mask_filename=mask, b0_thr=0)
 ae.set_model('NODDI')
 ae.set_config('OUTPUT_path',outdir)
+ae.model.set(dPar=0.001)# Set the diffusivity of the extra-cellular water to 1.0 um^2/ms
+
 
 ae.generate_kernels()
 ae.load_kernels()
